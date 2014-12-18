@@ -1,0 +1,103 @@
+#!/usr/bin/perl -w
+#
+# Determine helix parameters of all helices in a PDB file with 
+# the program PS.
+#
+# The PDB file and PS executable must be present in the current 
+# working directory. A temporary file, psout, is created during 
+# execution; this file must not be present in the current 
+# working directory at initially.
+#
+
+if($#ARGV<0){
+    print STDERR "Require name of PDB file\n";
+    exit;
+}
+
+$pdbin=$ARGV[0];
+$outputfile=$ARGV[1];
+
+open( FILE, "< $pdbin" ) or die "Can't open file $pdbin\n";
+@pdbin=<FILE>;
+
+
+# Minimum number of residues in helix (-1)
+$min=9;
+# Maximum number of intervals - Seed maximum is 250.0
+$steps=46;
+# Step-size
+$step_size=5.0;
+# Initial seed
+$initial_seed=20.0;
+# Class: 
+# 1 = right-handed alpha
+# 2 = right-handed omega
+# 3 = right-handed pi
+# 4 = right-handed gamma
+# 5 = right-handed 3-10
+# 6 = left-handed alpha
+# 7 = left-handed omega 
+# 8 = left-handed gamma
+# 9 = 2-7 ribbon helix
+# 10 = polyproline
+$class=1;
+
+foreach $line (@pdbin) {
+  if ($line =~/^HELIX/) {
+    $seed=$initial_seed;
+    $number = substr($line, 7, 3); 
+    $first = substr($line, 21, 5);
+    $last = substr($line, 33, 5);
+    $chain = substr($line, 19,1);
+    $length = substr($line, 71,5);
+    $type = substr($line, 38, 2);
+    if( ($length > $min) && ($type == $class) ) {
+      if (-e "psout") {
+        print"psout exists. Can't continue\n";
+        exit; 
+        }
+      else {
+# Initial objective minimum
+        $objmin = 99999.0;
+        for($i = 1; $i < $steps; $i++) {
+          if( !system("./PS -i $pdbin -f $first -l $last -c $chain -a CA -s $seed.0 -o $outputfile") ) {
+            open( TMP, "< $outputfile" ) or die "Can't access PS output\n";
+            @psout=<TMP>;
+            foreach $line (@psout) {
+              if ($line =~/^ Minimized Objective : /) {
+                $minobj = substr($line, 22, 13);
+                if($minobj < $objmin) {
+                  $objmin = $minobj;
+                  foreach $line (@psout) {
+                    if ($line =~/^ Sphere radius:/) {
+                      $radius = substr($line, 16, 12);
+                    }
+                    elsif ($line =~/^ Average distance /) {
+                      $distance = substr($line, 20, 8);
+                      $sddist = substr($line, 32, 6);
+                    }
+                    elsif ($line =~/^ Helix length:/) {
+                      $arclength = substr($line, 15, 8);
+                      last;
+                    }
+                  }
+                }
+              }
+            }
+            close TMP;
+            unlink "psout";
+          }
+          $seed = $seed+$step_size;
+          unlink "psout";
+        }
+        if($objmin == 99999.0) {
+          print STDERR "Unable to determine helix parameters\n";
+        }
+        else {
+          print STDERR "$pdbin $number $radius $distance +/- $sddist $arclength $length\n";
+        }
+      }
+    }
+  }
+}
+close FILE;

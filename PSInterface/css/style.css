@@ -1,0 +1,275 @@
+/**
+ * Author: Diego Montufar
+ * Date: 03/12/2014
+ * 
+ */
+
+/** Basic Form Styling **/
+
+.PSForm{
+ 	width: 500px;
+}
+
+
+.PSForm-container {
+    font-size: 75%;
+    color: #222;
+    background: #fff;
+    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+}
+
+.PSForm .align-left{
+	width:200px;
+	float:left;
+	display:inline-block;
+}
+
+.PSForm .align-right{
+	margin-left:200px;
+	width:100%
+}
+
+#content {
+    float:left;
+    width:45%;
+}
+
+#sidebar {
+    float:left;
+    width:20%;
+    margin-top:9.5%;
+    background-color: #EAE8E0;
+    padding:15px;
+}
+
+/** Field Styles **/
+.PSForm .field, #form-title.field {
+    position: relative;
+    clear: both;
+}
+
+
+/** Field Width **/
+.f_100 {
+    width: 50%;
+    display: inline;
+    float: left;
+    margin-left: 2%;
+    margin-right: 2%; 
+}
+
+.uploader{
+   margin-top:5px; 
+   width:80%;
+}
+
+/** Input Fields **/
+
+.PSForm input, .PSForm textarea {
+    width: 100%;
+    font: 16px/24px Helvetica Neue, "Arial", Helvetica, Verdana, sans-serif;
+
+    outline: none;
+    display: inline-block;
+    position: relative;
+    z-index: 2;
+    background: #EDEDED; /* old browsers */
+    background: -moz-linear-gradient(top, #EDEDED 0%, #FCFCFC 10%, #FCFCFC 90%, #EDEDED 100%); /* firefox */
+
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #EDEDED), color-stop(10%, #FCFCFC), color-stop(90%, #FCFCFC), color-stop(100%, #EDEDED)); /* webkit */
+
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#EDEDED', endColorstr = '#EDEDED', GradientType = 0); /* ie */
+    border: 1px solid #ccc;
+    -moz-border-radius: 3px;
+    padding: 3px 0;
+}
+
+.PSForm input:focus, .PSForm textarea:focus, .PSForm select:focus {
+    -webkit-box-shadow: 0px 0px 5px #bfdeff;
+    -moz-box-shadow: 0px 0px 5px #bfdeff;
+    box-shadow: 0px 0px 5px #bfdeff;
+}
+
+/**.PSForm input[type=radio], .PSForm input[type=checkbox] {
+    width: 12px;
+    margin: 8px 12px;
+    top: 3px;
+    position: relative;
+}**/
+
+
+.radio-toolbar input[type="radio"] {
+    display:none;
+}
+
+.radio-toolbar label {
+    display:inline-block;
+    background-color:#ddd;
+    padding:4px 11px;
+    font-family:Arial;
+    font-size:16px;
+}
+
+.radio-toolbar input[type="radio"]:checked + label {
+    background-color:#bbb;
+
+}
+
+.PSForm .option {
+    margin: 6px 0;
+}
+
+.PSForm select {
+    padding: 6px 6px;
+}
+
+.PSForm textarea {
+    overflow: hidden;
+}
+
+.PSForm label {
+    color: #666;
+    text-align: left;
+    font: 16px/24px Helvetica Neue, "Arial", Helvetica, Verdana, sans-serif;
+}
+
+.PSForm .submit input {
+    text-align: center;
+    font-size: 14px;
+    text-decoration: none;
+    border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    -ms-border-radius: 3px;
+    text-shadow: 1px 1px 0px #fff;
+    display: block;
+    margin: 12px -2px 12px 0;
+    text-align: center;
+    float: right;
+    padding: 6px 3px;
+    height: 36px;
+    cursor: pointer;
+    min-width: 96px;
+    width: auto;
+    background: #FBFBFB; /* old browsers */
+    background: -moz-linear-gradient(top, #FBFBFB 0%, #EEEEEE 99%); /* firefox */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #FBFBFB), color-stop(99%, #EEEEEE)); /* webkit */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#FBFBFB', endColorstr = '#EEEEEE', GradientType = 0); /* ie */
+    border: 1px solid #cfcfcf;
+    font-weight: bold;
+    color: #666;
+}
+
+/* input field tooltips */
+input + .fieldtip {
+  visibility: hidden;
+  position: relative;
+  bottom: 24px;
+  left: 105%; 
+  opacity: 0;
+  content: attr(data-tool);
+  height: auto;
+  min-width: 100px;
+  padding: 5px 8px;
+  z-index: 9999;
+  color: #fff;
+  font-size: 1.2em;
+  text-decoration: none;
+  text-align: center;
+  background: rgba(42, 120, 197, 1);
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  -webkit-transition: all 0.2s ease-in-out;
+  -moz-transition: all 0.2s ease-in-out;
+  -ms-transition: all 0.2s ease-in-out;
+  -o-transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
+}
+ 
+input + .fieldtip:after {
+  display: block;
+  position: absolute;
+  visibility: hidden;
+  content:'';
+  width: 0;
+  height: 0;
+  top: 8px;
+  left: -8px;
+  border-style: solid;
+  border-width: 4px 8px 4px 0;
+  border-color: transparent rgba(42, 120, 197, 1) transparent transparent;
+  -webkit-transition: all 0.2s ease-in-out;
+  -moz-transition: all 0.2s ease-in-out;
+  -ms-transition: all 0.2s ease-in-out;
+  -o-transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
+}
+ 
+input:focus + .fieldtip, input:focus + .fieldtip:after {
+  visibility: visible;
+  opacity: 1;
+}
+
+input:invalid{
+	background-color: #ffdddd;
+}
+
+input:focus:invalid{
+	color: red;
+}
+
+/**Error Messages **/
+
+.PSForm .error {
+    height: 16px;
+    font: 11px/16px Helvetica Neue, "Arial", Helvetica, Verdana, sans-serif;
+    color: #ff0033;
+    padding-left: 12px;
+    z-index: 999;
+    position: relative;
+    top: -1px;
+}
+
+/** Loading Indicator **/
+.loading-text {
+    position: relative;
+    top: -3px;
+}
+
+/** Clearfix */
+.clearfix:after {
+    clear: both;
+    content: ' ';
+    display: block;
+    font-size: 0;
+    line-height: 0;
+    visibility: hidden;
+    width: 0;
+    height: 0;
+}
+
+/*
+	The following zoom:1 rule is specifically for IE6 + IE7.
+	Move to separate stylesheet if invalid CSS is a problem.
+*/
+* html .clearfix,
+*:first-child+html .clearfix {
+    zoom: 1;
+}
+
+#fileDisplayArea {
+  margin-top: 2em;
+  width: 100%;
+  overflow-x: auto;
+  background-color: ghostwhite;
+  max-height: 700px;
+}
+
+
+
+
+
+
+
+
