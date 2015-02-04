@@ -1,0 +1,7 @@
+#!/bin/bash
+dirinput = "files/input";
+diroutput = "files/output";
+echo "Deleting old directories and files from input sub-directory...";
+find $dirinput -type d -ctime +5 | xargs rm -rf;
+echo "Deleting old directories and files from input sub-directory...";
+find $diroutput -type d -ctime +5 | xargs rm -rf;

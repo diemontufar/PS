@@ -6,14 +6,20 @@
 
 session_start(); 
 set_error_handler("showError");
-date_default_timezone_set('Australia/Victoria');
+
+// Parse without sections
+$ini_parameters = parse_ini_file("config/web-config.ini");
+//print_r($ini_parameters);
+
+date_default_timezone_set($ini_parameters['timezone']);
 
 // define form variables and set to empty values
 $name = $helix = $chain = $first = $last = $atom_type = $model = $ref_type = $conformer = $radius = $seed = $scan = $pdb_file = $answer = $pdbId = "";
 
 
 //define variables for executing command and creating directories
-$command = "./PS ";
+$command = $ini_parameters['ps_location']." ";
+$auto_command = $ini_parameters['automated_location']." ";
 $output_file_name = "";
 $parent_directory = "files";
 $input = "/input/";
@@ -21,35 +27,54 @@ $output = "/output/";
 $current_input_dir = "";
 $current_output_dir = "";
 $_SESSION['processed'] = "false";
+$process = false;
 
 
 /** Get values from the user input **/
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
   
-  $name = test_input($_POST["name"]);
-  $helix = test_input($_POST["helix"]);
-  $chain = test_input($_POST["chain"]);
-  $first = test_input($_POST["first"]);
-  $last = test_input($_POST["last"]);
-  $atom_type = test_input($_POST["atom_type"]);
-  $model = test_input($_POST["model"]);
-  $ref_type = test_input($_POST["ref_type"]);
-  $conformer = test_input($_POST["conformer"]);
-  $radius = test_input($_POST["radius"]);
-  $seed = test_input($_POST["seed"]);
-  $scan = test_input($_POST["scan"]);
-  $pdbId = test_input($_POST["pdb_id"]);
-  $process = false;
-  $answer = test_input($_POST['process']);  
-	if ($answer == "manual") {          
-	    $process = true;     
-	}
-	else if($answer == "auto"){
-	    $process = false;
-	}          
-   
-}
+  global $process;
 
+  $name = (isset($_POST["name"]) ? test_input($_POST["name"]) : '');
+  $helix = (isset($_POST["helix"]) ? test_input($_POST["helix"]) : '');
+  $chain = (isset($_POST["chain"]) ? test_input($_POST["chain"]) : '');
+  $first = (isset($_POST["first"]) ? test_input($_POST["first"]) : '');
+  $last = (isset($_POST["last"]) ? test_input($_POST["last"]) : '');
+  $atom_type = (isset($_POST["atom_type"]) ? test_input($_POST["atom_type"]) : '');
+  $model = (isset($_POST["model"]) ? test_input($_POST["model"]) : '');
+  $ref_type = (isset($_POST["ref_type"]) ? test_input($_POST["ref_type"]) : '');
+  $conformer = (isset($_POST["conformer"]) ? test_input($_POST["conformer"]) : '');
+  $radius = (isset($_POST["radius"]) ? test_input($_POST["radius"]) : '');
+  $seed = (isset($_POST["seed"]) ? test_input($_POST["seed"]) : '');
+  $scan = (isset($_POST["scan"]) ? test_input($_POST["scan"]) : '');
+  $pdbId = (isset($_POST["pdb_id"]) ? test_input($_POST["pdb_id"]) : '');
+
+
+  /*Check if there is some required empty field */ 
+  if (empty($name) || empty($pdbId)){
+  	$_SESSION['response'] = $ini_parameters['error_fields'];
+	$_SESSION['image'] = "error";
+	$_SESSION['error'] = "true";
+	header("Location: index.php");
+  	die();
+  }
+
+  /*Check if there is Internet Connection */ 
+  if (!isConnected('http://www.rcsb.org')){
+  	$_SESSION['response'] = $ini_parameters['error_connection'];
+	$_SESSION['image'] = "error";
+	$_SESSION['error'] = "true";
+	header("Location: index.php");
+  	die();
+  }
+  
+  if (test_input($_POST['selection'])=="manual"){
+	$process = true;
+  }else{
+	$process = false;
+  }
+
+}
 /**Here are the main method calls **/
 
 //Connect with PDB Web Server
@@ -57,7 +82,7 @@ $resp = getWebServiceResponse($pdbId);
 
 if(!empty($resp)){
 
-	$sId = $tit = "";
+	$sId = $tit = "";	
 
 	foreach ($resp->PDB as $pdb_details) {
 	   $sId = $sId.$pdb_details['structureId'];
@@ -68,29 +93,113 @@ if(!empty($resp)){
 	$_SESSION['description'] = $tit;
 
 	//Create Directories to store files
-	verifyDirectories();
+	verifyDirectories($name);
 	//Upload pdb file to input directory
 	downloadFileToServer();
 	//Construct command line
 	$command = $command.constructCommand();
 	//Run PS program on the server
-	executePS($command);
-	//$_SESSION['response'] = "The file was successfully uploaded with command: ".$command;
-	$_SESSION['response'] = "The file was successfully processed, please check PS Analysis on the Results tab. ";
+	$r = executePS($command);
+        
+	//Generate compressed file
+	
+	$files = array_diff(scandir($current_output_dir), array('..', '.'));
+	
+	if (count($files) > 1){
+		unset($files[0],$files[1]);
+		//var_dump($files);
+		sort($files);
+		$result = create_zip($current_output_dir,$files,$current_output_dir.changeFileName($name).'.zip');
+
+		if ($result){
+			$_SESSION['isZip']=changeFileName($name).'.zip'; //Zip file name as well
+			$_SESSION['output-zip-name']=$current_output_dir.changeFileName($name).'.zip'; //path to the zip file
+		}
+	}
+	readStatistics();
+	//Show response to the client
+	$_SESSION['response'] = $ini_parameters['success_msg'];
 	$_SESSION['image'] = "success"; 
 	$_SESSION['processed'] = "true";
 }else{
-	$_SESSION['response'] = "File not found on RCSB Protein Data Bank ";
+	//Show error to the client	
+	$_SESSION['response'] = $ini_parameters['error_msg'];
 	$_SESSION['image'] = "error";
+	$_SESSION['error'] = "true";
 }
+
 header("Location: index.php");
+
+/** Check web service connection **/
+function isConnected($url){
+
+	if(!filter_var($url,FILTER_VALIDATE_URL)){
+		return false;
+	}
+
+	$curlInit = curl_init($url);
+	curl_setopt($curlInit, CURLOPT_CONNECTTIMEOUT, 10);
+	curl_setopt($curlInit, CURLOPT_HEADER, true);
+	curl_setopt($curlInit, CURLOPT_NOBODY, true);
+	curl_setopt($curlInit, CURLOPT_RETURNTRANSFER, true);
+
+	$response = curl_exec($curlInit);
+
+	curl_close($curlInit);
+
+	if ($response) return true;
+
+	return false;
+}
+
+/**Read final statistics**/
+function readStatistics(){
+
+	global $current_output_dir,$process,$ini_parameters;
+
+	if ($process){
+		return;
+	}
+
+	$file_name = $ini_parameters['stats_file'];
+	$file_name = $current_output_dir.$file_name;	
+	$i = 0;
+	$stats = array("", "", "", "");
+
+	$handle = @fopen($file_name, "r");
+	if ($handle) {
+	    while (($buffer = fgets($handle, 4096)) !== false) {
+		$stats[$i] = $buffer;
+		$i++;
+	    }
+	    if (!feof($handle)) {
+		echo "Reading statistics file\n";
+	    }
+	    fclose($handle);
+	}
+        
+	if (!empty($stats)){
+
+		if ($stats[0] > 60){
+			$_SESSION['time'] = round(($stats[0]/60),2).' min';
+		}else{
+			$_SESSION['time'] = round($stats[0],2).' sec';
+		}
+		$_SESSION['structures'] = $stats[1];
+		$_SESSION['successfuly'] = $stats[2];
+		$_SESSION['errors'] = $stats[3];
+	}
+}
+
 
 /** Download result from REST PDB Web Service: **/
 function getWebServiceResponse($pdb_id){
 
+	global $ini_parameters;
+
 	$curl = curl_init();
 
-	$url = 'http://www.rcsb.org/pdb/rest/describePDB?structureId=';
+	$url = $ini_parameters['PDB_description_URL'];
 	
 	$url = $url.$pdb_id;
 
@@ -107,27 +216,29 @@ function getWebServiceResponse($pdb_id){
 /** Executes the PS program on the server, $comm is the comand line constructed with parameters for the PS program **/
 function executePS($comm){
 	
-	global $process, $current_input_dir, $pdb_file, $current_output_dir, $name;
-	
-	if ($process == true){
+	global $process, $current_input_dir, $pdb_file, $current_output_dir, $name, $auto_command;
+	$output="";	
+
+	if ($process){
+		//Normal Process
 		exec($comm,$output);
 	}else{
-		$comm2 = "./automated-ps ".$current_input_dir. $pdb_file." ".$current_output_dir.$name.".out";	
-		exec($comm2,$output);
+		//Automatic Process
+		$auto_command = $auto_command.$current_input_dir. $pdb_file." ".$current_output_dir;	
+		$output = shell_exec($auto_command);
 	}
 	return $output;
-
 }
 
 /** This method uploads the file from the user input to a directory on the server **/
 function downloadFileToServer(){
 
-	global $current_input_dir,$pdb_file,$pdbId;
+	global $current_input_dir,$pdb_file,$pdbId,$ini_parameters;
 	
 	$pdb_file = $pdbId.'.pdb';
 	$target_file = $current_input_dir.$pdb_file;
 
-	$file_url = 'http://www.rcsb.org/pdb/download/downloadFile.do?fileFormat=pdb&compression=NO&structureId='.$pdbId;
+	$file_url = $ini_parameters['PDB_file_URL'].$pdbId;
 
 	$ch = curl_init($file_url);
 	$fp = fopen($target_file, 'wb');
@@ -194,7 +305,6 @@ function constructCommand(){
 	}
 	
 	$name = changeFileName($name);
-	$name = $name.'_'.date('H-i');
 	
 	$_SESSION['output'] = $current_output_dir . $name . ".out";
 	$_SESSION['output-file-name'] = $name . ".out";
@@ -219,7 +329,7 @@ function changeFileName($string){
 /** Creates file directory structure for storing input and output files on the server
 *   each directory is named by the current date
 **/
-function verifyDirectories(){
+function verifyDirectories($job_name){
 
 	global $parent_directory, $input, $output, $current_output_dir,$current_input_dir;
 	
@@ -249,6 +359,11 @@ function verifyDirectories(){
 		mkdir($current_input_dir, 0777, true);
 	}
 	
+	$job_name = changeFileName($job_name);
+	$time = date("H-i-s"); //get the current time
+	$current_output_dir = $current_output_dir.$job_name."_".$time."/";
+	$_SESSION['path-to-output'] = $current_output_dir;
+
 	if (!file_exists($current_output_dir)) {
 		mkdir($current_output_dir, 0777, true);
 	}
@@ -272,6 +387,55 @@ function showError($errno,$errstr){
 /**Message Handling **/
 function showMessage($msg){
 	echo "<b>$msg</b><br>";
+}
+
+/* creates a compressed zip file */
+function create_zip($path='',$files = array(),$destination = '',$overwrite = false) {
+	
+	global $ini_parameters;
+
+	//if the zip file already exists and overwrite is false, return false
+	if(file_exists($destination) && !$overwrite) { return false; }
+	//vars
+	$valid_files = array();
+	//if files were passed in...
+	if(is_array($files)) {
+		//cycle through each file
+		foreach($files as $file) {
+			//make sure the file exists
+			if(file_exists($path.$file)) {
+				if ($file != $ini_parameters['stats_file']){
+					$valid_files[] = $path.$file;
+				}
+			}
+		}
+	}
+	//if we have good files...
+
+	if(count($valid_files)) {
+		//create the archive
+		$zip = new ZipArchive();
+		if($zip->open($destination,$overwrite ? ZIPARCHIVE::OVERWRITE : ZIPARCHIVE::CREATE) !== true) {
+			return false;
+		}
+		//add the files
+		foreach($valid_files as $file) {
+			$new_filename = substr($file,strrpos($file,'/') + 1);
+			$zip->addFile($file,$new_filename);
+		}
+		//debug
+		//echo 'The zip archive contains ',$zip->numFiles,' files with a status of ',$zip->status;
+		
+		//close the zip -- done!
+		$zip->close();
+		
+		//check to make sure the file exists
+		return file_exists($destination);
+	}
+	else
+	{
+		return false;
+	}
 }
 
 ?>

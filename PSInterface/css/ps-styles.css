@@ -1,0 +1,571 @@
+/**
+ * Author: Diego Montufar
+ * Date: 03/12/2014
+ * 
+ */
+
+/******************************************** Layout Styling *********************************************/
+
+header {
+    background-color:rgb(72, 159, 197);
+    color:white;
+    text-align:center;
+    padding:5px;
+}
+
+/*
+@media only screen and (max-width: 1024px) {
+
+
+   nav {
+    font-size: 12px; 
+    background-color:#eeeeee;
+    width:20%;
+    float:left;
+    padding:10px;      
+    }
+
+}*/
+
+@media only screen and (max-width: 600px) {
+	
+   .toggle-button{
+      display: none;
+   }
+
+   nav {
+    display: none;
+   }
+}
+
+nav {
+    line-height:15px;
+    font-size: 12px; 
+    background-color:#eeeeee;
+    width:20%;
+    /*height: 100%;*/
+    float:left;
+    padding:20px;	    
+}
+
+
+nav p{
+
+  text-align: justify;
+
+}
+
+section {
+    width:75%;
+    float:left;
+    padding:10px;
+    padding-bottom: 0px;
+ 	 
+}
+footer {
+    background-color:rgb(72, 159, 197);
+    color:white;
+    clear:both;
+    text-align:center;
+    padding:5px; 	 
+    margin-top: 60px;
+    height: 65px;
+}
+
+#footer-wrapper {
+width:100%;
+font-size: 13px;
+}
+
+.footerdivs {
+width:100%;
+float:left;
+clear:none;
+}
+
+article {
+  padding: 10px;
+  
+}
+
+
+
+/* Make the height automatic */
+html, body { 
+  height: 100%; 
+  margin: 0px;
+  background-image: url(../images/background.png);
+  background-repeat:repeat;
+  font-family: "Arial";
+}
+
+a {
+        font-family: Helvetica;
+        font-size:   1em;
+        text-decoration: none;
+        
+    }
+
+a:link    { color: #405EBD; }
+a:visited { color: #B5003E; }
+a:hover   { color: #FFF5D3; }
+
+
+/* Tabs */
+ul.tabs {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  border-bottom: gray solid 1px;
+  height: 2.70em;
+}
+ul.tabs li {
+  border: gray solid 1px;
+  border-bottom: none;
+  float: left;
+  margin: 0 .25em 0 0;
+  padding: 0.75em 1.5em;
+  border-radius: 5px 5px 0 0;
+}
+ul.tabs li a {
+  color: gray;
+  font-weight: bold;
+  text-decoration: none;
+}
+ul.tabs li.active {
+  background: gray;
+}
+ul.tabs li.active a {
+  color: white;
+}
+.clr {
+  clear: both;
+}
+
+.tab-title {margin-top:30px;color: rgb(178, 48, 63);}
+
+.instructions{
+color: rgb(138, 139, 150); 
+font-size: 10pt; 
+width: 70%; 
+margin-left: 20px; 
+margin-bottom: 30px;
+font-style: italic;
+}
+
+/* Alert Messages */
+.close {
+  float: right;
+  font-size: 20px;
+  font-weight: bold;
+  line-height: 18px;
+  color: #000000;
+  text-shadow: 0 1px 0 #ffffff;
+  opacity: 0.2;
+  filter: alpha(opacity=20);
+}
+.close:hover {
+  color: #000000;
+  text-decoration: none;×
+  opacity: 0.4;
+  filter: alpha(opacity=40);
+  cursor: pointer;
+}
+
+.alert {
+  padding: 8px 35px 8px 14px;
+  margin-bottom: 18px;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+  background-color: #fcf8e3;
+  border: 1px solid #fbeed5;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  color: #c09853;
+}
+.alert-heading {
+  color: inherit;
+}
+.alert .close {
+  position: relative;
+  top: -2px;
+  right: -21px;
+  line-height: 18px;
+}
+.alert-success {
+  background-color: #dff0d8;
+  border-color: #d6e9c6;
+  color: #468847;
+}
+.alert-danger,
+.alert-error {
+  background-color: #f2dede;
+  border-color: #eed3d7;
+  color: #b94a48;
+}
+.alert-info {
+  background-color: #d9edf7;
+  border-color: #bce8f1;
+  color: #3a87ad;
+}
+.alert-block {
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+.alert-block > p,
+.alert-block > ul {
+  margin-bottom: 0;
+}
+.alert-block p + p {
+  margin-top: 5px;
+}
+
+
+/*********************************************** Basic Form Styling **********************************/
+
+.PSForm{
+ 	width: 500px;
+}
+
+
+.PSForm-container {
+    font-size: 75%;
+    color: #222;
+    background: #fff;
+    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+}
+
+.PSForm .align-left{
+	width:200px;
+	float:left;
+	display:inline-block;
+}
+
+.PSForm .align-right{
+	margin-left:200px;
+	width:100%
+}
+
+#content {
+    float:left;
+    width:40%;
+}
+
+#sidebar {
+    float:left;
+    width:20%;
+    margin-top:9.5%;
+    background-color: #EAE8E0;
+    padding:15px;
+}
+
+/** Field Styles **/
+.PSForm .field, #form-title.field {
+    position: relative;
+    clear: both;
+}
+
+
+/** Field Width **/
+.f_100 {
+    width: 50%;
+    display: inline;
+    float: left;
+    margin-left: 2%;
+    margin-right: 2%; 
+}
+
+
+.uploader{
+   margin-top:5px; 
+   width:80%;
+}
+
+/** Input Fields **/
+
+.PSForm input, .PSForm textarea {
+    width: 100%;
+    font: 16px/24px Helvetica Neue, "Arial", Helvetica, Verdana, sans-serif;
+
+    outline: none;
+    display: inline-block;
+    position: relative;
+    z-index: 2;
+    background: #EDEDED; /* old browsers */
+    background: -moz-linear-gradient(top, #EDEDED 0%, #FCFCFC 10%, #FCFCFC 90%, #EDEDED 100%); /* firefox */
+
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #EDEDED), color-stop(10%, #FCFCFC), color-stop(90%, #FCFCFC), color-stop(100%, #EDEDED)); /* webkit */
+
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#EDEDED', endColorstr = '#EDEDED', GradientType = 0); /* ie */
+    border: 1px solid #ccc;
+    -moz-border-radius: 3px;
+    padding: 3px 0;
+}
+
+.PSForm input:focus, .PSForm textarea:focus, .PSForm select:focus {
+    -webkit-box-shadow: 0px 0px 5px #bfdeff;
+    -moz-box-shadow: 0px 0px 5px #bfdeff;
+    box-shadow: 0px 0px 5px #bfdeff;
+}
+
+.radio-toolbar input[type="radio"] {
+    display:none;
+}
+
+.radio-positioning{
+    width:600px;
+    height:54px;
+}
+
+.radio-toolbar label {
+    display:inline-block;
+    background-color:#ddd;
+    padding:4px 11px;
+    font-family:Arial;
+    font-size:16px;
+}
+
+.radio-toolbar input[type="radio"]:checked + label {
+    background-color:#bbb;
+
+}
+
+.PSForm .option, .tableOption .option{
+    margin: 6px 0;
+}
+
+.PSForm select{
+    padding: 6px 6px;
+    width:100%;
+}
+
+.big-select{
+    height:54px;
+    width:100%;
+}
+
+.tableOption select{
+    padding: 6px 6px;
+    width:40%;
+    float: left;
+    margin-right: 15px;
+}
+
+.tableOption{
+    width:100%;
+}
+
+.PSForm textarea {
+    overflow: hidden;
+}
+
+.PSForm label {
+    color: #666;
+    text-align: left;
+    font: 16px/24px Helvetica Neue, "Arial", Helvetica, Verdana, sans-serif;
+}
+
+.PSForm .submit input {
+    text-align: center;
+    font-size: 14px;
+    text-decoration: none;
+    border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    -ms-border-radius: 3px;
+    text-shadow: 1px 1px 0px #fff;
+    display: block;
+    margin: 12px -2px 12px 0;
+    float: right;
+    padding: 6px 3px;
+    height: 36px;
+    cursor: pointer;
+    min-width: 96px;
+    width: auto;
+    background: #FBFBFB; /* old browsers */
+    background: -moz-linear-gradient(top, #FBFBFB 0%, #EEEEEE 99%); /* firefox */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #FBFBFB), color-stop(99%, #EEEEEE)); /* webkit */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#FBFBFB', endColorstr = '#EEEEEE', GradientType = 0); /* ie */
+    border: 1px solid #cfcfcf;
+    font-weight: bold;
+    color: #666;
+margin-left: 200px;
+}
+
+.submit-button{
+	width: 90%;
+}
+
+/* input field tooltips */
+input + .fieldtip {
+  visibility: hidden;
+  position: relative;
+  bottom: 24px;
+  left: 105%; 
+  opacity: 0;
+  content: attr(data-tool);
+  height: auto;
+  min-width: 100px;
+  padding: 5px 8px;
+  z-index: 9999;
+  color: #fff;
+  font-size: 13px;
+  text-decoration: none;
+  text-align: center;
+  background: rgba(42, 120, 197, 1);
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  -webkit-transition: all 0.2s ease-in-out;
+  -moz-transition: all 0.2s ease-in-out;
+  -ms-transition: all 0.2s ease-in-out;
+  -o-transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
+}
+ 
+input + .fieldtip:after {
+  display: block;
+  position: absolute;
+  visibility: hidden;
+  content:'';
+  width: 0;
+  height: 0;
+  top: 8px;
+  left: -8px;
+  border-style: solid;
+  border-width: 4px 8px 4px 0;
+  border-color: transparent rgba(42, 120, 197, 1) transparent transparent;
+  -webkit-transition: all 0.2s ease-in-out;
+  -moz-transition: all 0.2s ease-in-out;
+  -ms-transition: all 0.2s ease-in-out;
+  -o-transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
+}
+
+.big-fieldtip {height:54px;}
+ 
+input:focus + .fieldtip, input:focus + .fieldtip:after {
+  visibility: visible;
+  opacity: 1;
+}
+
+input:invalid{
+	background-color: #ffdddd;
+}
+
+input:focus:invalid{
+	color: red;
+}
+
+.invalid input:required:invalid{
+  background: #BE4C54;
+}
+
+
+.input-big-tooltip{
+display:inline-block;
+bottom:30px;
+text-align: left;width:80px;
+}
+
+/**Error Messages **/
+
+.PSForm .error {
+    height: 16px;
+    font: 11px/16px Helvetica Neue, "Arial", Helvetica, Verdana, sans-serif;
+    color: #ff0033;
+    padding-left: 12px;
+    z-index: 999;
+    position: relative;
+    top: -1px;
+}
+
+
+/** Clearfix */
+.clearfix:after {
+    clear: both;
+    content: ' ';
+    display: block;
+    font-size: 0;
+    line-height: 0;
+    visibility: hidden;
+    width: 0;
+    height: 0;
+}
+
+
+
+/*
+	The following zoom:1 rule is specifically for IE6 + IE7.
+	Move to separate stylesheet if invalid CSS is a problem.
+*/
+* html .clearfix,
+*:first-child+html .clearfix {
+    zoom: 1;
+}
+
+#fileDisplayArea {
+  margin-top: 2em;
+  width: 100%;
+  overflow-x: auto;
+  background-color: rgb(220, 240, 249);
+  max-height: 800px;
+}
+
+img {
+	padding: 0; 
+	float: none;
+	vertical-align:middle;
+	height: 25px;
+	width: 25px;	
+}
+
+
+table { border-collapse: collapse; font-family: Futura, Arial, sans-serif; border: 1px solid #888; }
+caption { font-size: larger; margin: 1em auto; }
+th, td { padding: .65em; }
+th, thead { background: #000; color: #fff; border: 1px solid #000; }
+tr:nth-child(odd) { background: #ccc; }
+tr:hover { background: #aaa; }
+td { border-right: 1px solid #888; }
+
+.loader {
+    /* some styles to position the modal at the center of the page */
+    
+    /*background: rgba(255, 255, 255, 0.39);*/
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.63);
+    text-align: center;
+    padding-top: 20%;
+   
+    /* needed styles for the overlay */
+    z-index: 10; /* keep on top of other elements on the page */
+    /*outline: 9999px solid rgba(232, 232, 232, 0.5);*/
+
+}
+
+.loader img {
+	height: 170px;
+	width: 170px;	
+}
+
+.loader-texts {
+	color: white; 
+	font-size: 15px;
+  margin: auto;
+}
+
+.toggle-button {
+	position: align-left; 
+	display:inline-block; 
+	width: 2%;
+}
+
+.main-title {
+	display:inline-block; 
+	width: 95%;
+}
+
+
