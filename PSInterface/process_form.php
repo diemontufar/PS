@@ -331,7 +331,7 @@ function changeFileName($string){
 **/
 function verifyDirectories($job_name){
 
-	global $parent_directory, $input, $output, $current_output_dir,$current_input_dir;
+	global $parent_directory, $input, $output, $current_output_dir,$current_input_dir,$pdbId;
 	
 	//Create directory files if it does not exist:
 	if (!file_exists($parent_directory)) {
@@ -363,6 +363,8 @@ function verifyDirectories($job_name){
 	$time = date("H-i-s"); //get the current time
 	$current_output_dir = $current_output_dir.$job_name."_".$time."/";
 	$_SESSION['path-to-output'] = $current_output_dir;
+
+	$_SESSION['path-to-input'] = $current_input_dir."/".$pdbId.'.pdb';
 
 	if (!file_exists($current_output_dir)) {
 		mkdir($current_output_dir, 0777, true);

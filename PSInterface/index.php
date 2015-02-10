@@ -13,12 +13,21 @@ session_start();
     <!-- CSS Styles: 
     <link rel="stylesheet" href="css/styles.css" media="screen" />
     <link rel="stylesheet" href="css/print.css" media="print" />-->
-    <meta name="viewport" content="width=device-width" />
+        <!-- LTU //-->
+    <meta name="description" content="PS (Pandus Semita), is a program for the analysis of helix geometry" />
+    <meta name="keywords" content="Alpha helix, 310 helix, Pi helix, Radius of curvature, Phase yield, Pitch, Helix analysis, PS" />
+    <meta name="audience" content="students, staff members, researchers" />
+    <meta name="author" content="La Trobe University" />
+    <meta name="assetcreated" content="04 December 2014" />
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, minimum-scale=1, maximum-scale=2">
+
     <link rel="stylesheet" href="css/jquery-ui-1.10.3.css"  media="all" />
     <link rel="stylesheet" href="css/ps-styles.css" media="screen" type="text/css"/> 
 
     <!-- Javascript -->
-    <script type="text/javascript" src="js/jquery.min.js"></script> <!-- Verison: 1.9.1 -->
+    <script type="text/javascript" src="js/jquery-1.7.min.js"></script> <!-- Verison: 1.9.1 -->
     <script type="text/javascript" src="js/ps.js"></script>
 
 
@@ -51,7 +60,9 @@ session_start();
 
 <nav id="side-bar">
 <div class="nav-container" id="nav-container">
-	<h1>
+
+<div id="container-left" class="containerdivs">
+<h1>
 	  PS (Pandus Semita) 
 	  </h1>
 	  <p> 
@@ -64,16 +75,21 @@ session_start();
 	<p></p>
 
 	<img src="images/Helix.png" alt="Helix" style="width:90%;height:90%;">
+	
+
+</div>
+
+<div id="container-right" class="containerdivs">
 	<p>
 	PS determines the parameters that define the great circle arc that minimises the variance in distance from this arc to a collection of points that defines each monomer in the helical chain. 
 	Properties of helices include helix radius, pitch and radius of curvature. This approach can be applied to any helical structure of proteins, DNA or carbohydrates.</p>
-
 	<p>
 	Supporting information may be found in the online version of this <a target="_blank" href="http://www.sciencedirect.com/science/article/pii/S109332631100163X">Article</a>, containing an analysis of helices in DNA, left- and right-handed helices, heparin and collagen, 
 	five PDB format files for the ideal 3<sub>10</sub>, alpha, pi, polyproline-I and polyproline-II helices, an example output, instructions for use of the program.
 
 	</p>
 	<p></p>
+</div>
 </div>
 </nav>
 
@@ -107,6 +123,9 @@ session_start();
     <li class="active"><a href="#tab1">Process</a></li>
     <div id="tab-showFileContent">
     <li><a href="#tab2" >Results</a></li>
+    </div>
+    <div id="tab-showVisualization">
+    <li><a href="#tab3" >Visualization</a></li>
     </div>
 </ul>
 
@@ -286,17 +305,18 @@ Please fill out all the required fields (*). Choose between "Manual Settings" wh
 <h2 class="tab-title" >Results</h2>
 <input type="hidden" name="processedFlag" id="processedFlag" value="<?php if($_SESSION['processed']=='true') {echo $_SESSION['processed'];}else{echo 'false';}?>" />
 <input type="hidden" name="errorFlag" id="errorFlag" value="<?php if($_SESSION['error']=='true') {echo $_SESSION['error'];}else{echo 'false';}?>" />
+<div id="table-results" class="table-results">
 <table class="tableOption">
   <tr>
-    <td>PDB ID</td>
+    <td><strong>PDB ID</strong></td>
     <td><a target="_blank" href="http://www.rcsb.org/pdb/explore.do?structureId=<?php if(!empty($_SESSION['pdbId'])) {echo $_SESSION['pdbId'];}?>"><?php if(!empty($_SESSION['pdbId'])) {echo $_SESSION['pdbId'];}?></a></td> 
   </tr>
   <tr>
-    <td>Description</td>
+    <td><strong>Title</strong></td>
     <td><?php if(!empty($_SESSION['description'])) {echo $_SESSION['description'];}?></td> 
   </tr>
   <tr>
-    <td>PS Analysis Results</td>
+    <td><strong>All Results</strong></td>
     <td>
 	<div id="chooseStructure" >
 		Please select a HELIX structure number.
@@ -311,7 +331,7 @@ Please fill out all the required fields (*). Choose between "Manual Settings" wh
     </td> 
   </tr>
   <tr>
-  <td>HELIX structure</td>
+  <td><strong>HELIX structure</strong></td>
   <td>
 	<div class="align-right">
 		<select name="helix_files" id="field30" onchange="getCombo(this)">
@@ -358,42 +378,241 @@ Please fill out all the required fields (*). Choose between "Manual Settings" wh
 	if (!empty($_SESSION["time"]) && !empty($_SESSION["structures"]) && !empty($_SESSION["successfuly"]) && !empty($_SESSION["errors"])) {
 
 		echo '<tr>';
-		  echo '<td>Execution time</td>';
+		  echo '<td><strong>Execution time</strong></td>';
 		 	echo '<td>'.$_SESSION["time"].'</td>';
 		echo '</tr>';
 		echo '<tr>';
-		  echo '<td>No. of Structures</td>';
+		  echo '<td><strong>Total No. of Structures</strong></td>';
 			echo '<td>'.$_SESSION["structures"].'</td>';
 		echo '</tr>';
 		echo '<tr>';
-		  echo '<td>Successfuly processed</td>';
+		  echo '<td><strong>Successfuly processed</strong></td>';
 			echo '<td>'.$_SESSION["successfuly"].'</td>';
 		echo '</tr>';
 		echo '<tr>';
-		  echo '<td>Non processed</td>';
+		  echo '<td><strong>Non processed(*)</strong></td>';
 		       echo '<td>'.$_SESSION["errors"].'</td>';
 		echo '</tr>';
 	}
 
         unset($_SESSION["time"]);
-	unset($_SESSION["structures"]);
-	unset($_SESSION["successfuly"]);
-	unset($_SESSION["errors"]);
+		unset($_SESSION["structures"]);
+		unset($_SESSION["successfuly"]);
+		unset($_SESSION["errors"]);
 	?>
 
 </table>
+<div class="instructions" >
+<br>
+(*)Some Helix records are ingored due to [...]
+</div>
+</div>
 
 <input type="hidden" name="filePath" id="filePath" value="<?php echo $_SESSION['path-to-output']?>" />
+<input type="hidden" name="pdbPath" id="pdbPath" value="<?php echo $_SESSION['path-to-input']?>" />
 <input type="hidden" name="zipFlag" id="zipFlag" value="<?php echo $_SESSION['isZip']?>" />
 <div id="fileDisplayArea">
 
 
+<p></p>
+</article>
+
+<article id="tab3">
+
+<div id="canvas-vis-wrapper" class="canvas-vis-wrapper">
+	<div id="glmol01" class="canvas-vis">
+		<div id="fullscreen-button" class="shine fullscreen-img">
+			<img id="full-img" src="images/fullscreen.png" alt="" title="Go Fullscreen" class="img-vis" onclick="return goFullScreen();">
+		</div>
+		<div id="picture-button" class="shine screenshot-img">
+			<img src="images/screenshot.png" alt="" title="Screenshot" class="img-vis" onclick="return saveImage();">
+		</div>
+	</div>
+</div>
+
+</div>
+<textarea id="glmol01_src" style="display: none"></textarea>
+
+
+<div class="tabBox" id="glmol01_viewbox">
+   <div id="insideTab" class="insideTab">
+      <table>
+         <tr>
+            <td align="center" colspan=2 height="30px">
+               <legend>View</legend>
+            </td>
+         </tr>
+         <tr>
+            <td><label for="glmol01_bgcolor">Background color:</label>	</td>
+            <td>
+            	<input type="color" value="#000000" id="glmol01_bgcolor">	
+            </td>
+         </tr>
+         <tr>
+            <td><label for="glmol01_color">Color By:</label></td>
+            <td>
+               <select id="glmol01_color" name="colors">
+                  <option selected="selected" value="chainbow">Spectrum</option>
+                  <option value="chain">Chain</option>
+                  <option value="ss">Secondary strcuture</option>
+                  <option value="b">B factor</option>
+                  <option value="polarity">Polar/Nonpolar</option>
+               </select>
+            </td>
+         </tr>
+         <tr>
+            <td><label for="glmol01_projection">Projection:</label></td>
+            <td>
+               <select id="glmol01_projection" name="project">
+                  <option value="orthoscopic">Orthoscopic</option>
+                  <option selected="selected" value="perspective">Perspective</option>
+               </select>
+            </td>
+         </tr>
+
+		 <tr>
+            <td><label for="glmol01_psresults">Helix Structure:</label></td>
+            <td>
+               <select id="glmol01_psresults" name="psresults" onchange="getComboVis(this)">
+                  <?php
+					$directory = $_SESSION['path-to-output'];
+					$scanned_directory = scandir($directory);
+					
+			 	        for ($i = 0; $i < count($scanned_directory); ++$i) {
+			 	          $ext = pathinfo($scanned_directory[$i]);
+			 	          if ($ext['extension'] == "out"){
+							  $name = preg_replace('/\\.[^.\\s]{3,4}$/', '', $scanned_directory[$i]);
+							  $scanned_directory[$i] = trim($name);
+						  }else{
+						  	  $scanned_directory[$i] = "";
+						  }
+					}
+					
+					$scanned_directory[0] = 'All';
+					$scanned_directory[1] = 'None';
+					sort($scanned_directory);
+
+						for ($i = 0; $i < count($scanned_directory); ++$i) {
+							if (!empty(trim($scanned_directory[$i]))){    
+								if ($scanned_directory[$i] == "None"){
+									echo '<option selected id="vis-'.$scanned_directory[$i].'" value="'.$scanned_directory[$i].'">';
+									echo $scanned_directory[$i];
+									echo '</option>';
+								}else{
+									echo '<option id="vis-'.$scanned_directory[$i].'" value="'.$scanned_directory[$i].'">';
+									echo $scanned_directory[$i];
+									echo '</option>';
+								}
+							}
+						}
+					?>
+               </select>
+            </td>
+         </tr>
+
+
+         <tr>
+            <td><label for="glmol01_mainchain">Main chain as:</label></td>
+            <td>
+               <select id="glmol01_mainchain" name="mainchain">
+                  <option selected="selected" value="thickRibbon">Thick ribbon</option>
+                  <option value="ribbon">Thin ribbon(faster)</option>
+                  <option value="strand">Strand</option>
+                  <option value="cylinderHelix">Cylinder & plate</option>
+                  <option value="chain">C alpha trace</option>
+                  <option value="tube">B factor Tube</option>
+                  <option value="bonds">Bonds (everything)</option>
+                  <option value="none">None</option>
+               </select>
+            </td>
+         </tr>
+         <tr>
+            <td><label for="glmol01_nb">Non-bonded atoms (solvent/ions) as:</label></td>
+            <td>
+               <select id="glmol01_nb" name="nonbonded">
+                  <option value="none">None</option>
+                  <option value="nb_sphere">Spheres</option>
+                  <option selected="selected" value="nb_cross">Stars</option>
+               </select>
+            </td>
+         </tr>
+         <tr>
+            <td><label for="glmol01_hetatm">Small molecules(HETATMs) as:</label></td>
+            <td>
+               <select id="glmol01_hetatm" name="hetam">
+                  <option value="stick">Sticks</option>
+                  <option value="ballAndStick">Ball and stick</option>
+                  <option value="ballAndStick2">Ball and stick (multiple bond)</option>
+                  <option selected="selected" value="sphere">Spheres</option>
+                  <option value="icosahedron">Icosahedrons</option>
+                  <option value="line">Lines</option>
+                  <option value="none">None</option>
+               </select>
+            </td>
+         </tr>
+         <tr>
+            <td> <label for="glmol01_base">Nucleic acid bases as:</label></td>
+            <td>
+               <select id="glmol01_base" name="nucleicbases">
+                  <option value="nuclStick">Sticks</option>
+                  <option selected="selected" value="nuclLine">Lines</option>
+                  <option value="nuclPolygon">Polygons</option>
+                  <option value="none">None</option>
+               </select>
+            </td>
+         </tr>
+         <tr>
+            <td><label for="glmol01_line">Side chains as lines</label></td>
+            <td><input id="glmol01_line" type="checkbox"></td>
+         </tr>
+         <tr>
+            <td><label for="glmol01_doNotSmoothen">Don't smoothen beta-sheets in ribbons</label>
+            </td>
+            <td><input id="glmol01_doNotSmoothen" type="checkbox"></td>
+         </tr>
+         <tr>
+            <td align="center" colspan=2 height="10px">
+            </td>
+         </tr>
+         <tr>
+            <td align="center" colspan=2 height="20px">
+               <legend>Multiple bond option is for SDF/MOL file ONLY</legend>
+            </td>
+         </tr>
+         <tr>
+            <td><label for="glmol01_cell">Unit cell</label></td>
+            <td><input type="checkbox" name="unit" id="glmol01_cell"></td>
+         </tr>
+         <tr>
+            <td><label for="glmol01_biomt">Biological assembly (the last one defined)</label></td>
+            <td><input type="checkbox" name="bio" id="glmol01_biomt"></td>
+         </tr>
+         <tr>
+            <td><label for="glmol01_packing">Crystal packing</label></td>
+            <td><input type="checkbox" name="crys" id="glmol01_packing"></td>
+         </tr>
+         <tr>
+            <td><label for="glmol01_symopHetatms">Show HETATMs in symmetry mates (slower)</label></td>
+            <td><input type="checkbox" name="sym" id="glmol01_symopHetatms"></td>
+         </tr>
+      </table>
+      <div class="button-vis">
+      	<button id="glmol01_reload" class="normal-button" onclick="reloadVis()">Apply</button><button class="normal-button" onclick="resetVis()">Reset</button>
+   	  </div>
+   </div>
+</div>
+
 </div>
 <?php unset($_SESSION["output"]); unset($_SESSION["output-file-name"]);unset($_SESSION["pdbId"]);unset($_SESSION["description"]);unset($_SESSION["processed"]);unset($_SESSION["isZip"]);unset($_SESSION["output-zip-name"]);unset($_SESSION["error"]);?>
 </div>
+<textarea id="hetatm-values" style="display: block; height: 500px; width: 500px;"></textarea>
 
-<p></p>
-</article>
+<script src="js/Three49custom.js"></script>
+<script type="text/javascript" src="js/GLmol.js"></script>
+<script type="text/javascript" src="js/visualization.js"></script>
+<script type="text/javascript" src="js/THREEx.FullScreen.js"></script>
+
+<article>
 
 </section>
 
@@ -414,23 +633,28 @@ P +61 (0)3 9479 3245 | F +61 (0)3 9479 1266
 </footer>
 
 
-</script><script type="text/javascript">
-	document.addEventListener('DOMContentLoaded', function() {
+<script type="text/javascript">
+	    document.addEventListener('DOMContentLoaded', function() {
 		enable(false);
-	    	document.getElementById("side-bar").style.display = "none";
+	    document.getElementById("side-bar").style.display = "none";
 		showElement("less",false);
 		showElement("more",true);
 
 		if (document.getElementById("processedFlag").value == "true"){
 			document.getElementById("tab-showFileContent").style.display = "block";
-		
+			document.getElementById("tab-showVisualization").style.display = "block";
+			document.getElementById('hetatm-values').value = "";
+			renderPDBFile(document.getElementById('pdbPath').value);
 		}else {
 			document.getElementById("tab-showFileContent").style.display = "none";
+			document.getElementById("tab-showVisualization").style.display = "none";
 			document.getElementById('selection').value="auto";
 		}
 
 	}, false);
 </script>
+
+
 
 </body>
 </html>

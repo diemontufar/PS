@@ -8,7 +8,7 @@
 
 /** This is the first method called when loading the page **/
 $(window).load(function() {
-	var myElement = document.getElementById("section-ps"),
+	/*var myElement = document.getElementById("section-ps"),
 	    myResizeFn = function(){
 	    		var sizeSection = $("#section-ps").css("height");
 	    		var sizeContainer = $("#nav-container").css("height");
@@ -22,7 +22,7 @@ $(window).load(function() {
 	    };
 		addResizeListener(myElement, myResizeFn);
 		//removeResizeListener(myElement, myResizeFn);
-
+*/
 	$(".loader").fadeOut("slow");
 	showElement('loader',false);
 	document.getElementById('file-img').style.visibility = "hidden";
@@ -116,11 +116,26 @@ function showElement(id,option){
 
 /** Read output file contents **/
 function readFile(file) {
+
 	$.get(file, function(data) {
+		var lines = null;
+		var records = "";
 		var pre = '<pre style="font-size:11px;">';	
 		data = pre.concat(data);
 		data = data.concat("</pre>");	
  		$('#fileDisplayArea').html(data);
+
+ 		/* Take only HETATM records and store them in a textarea for visualization */
+ 		lines = data.split("\n");
+    
+      	for (i=0; i<lines.length ;i++){
+			if (lines[i].indexOf("HETATM") > -1){
+				records = records + lines[i] + "\n";
+			}
+		}
+
+		document.getElementById('hetatm-values').value = records;
+
 	});
 }
 
@@ -154,21 +169,30 @@ function getCombo(sel) {
 }
 
 
+/** List Box Visualization Behaviour **/
+function getComboVis(sel) {
+    var value = sel.value;
+    var path = document.getElementById('filePath').value;
+    
+    if (value != 'None' && value != 'All'){ 
+	    var name_file = value.concat(".out");
+		var file = path.concat(name_file);	
+	    readFile(file);
+	}else if (value == 'All'){
+		joinAllHETATMs(path);
+	}
+}
+
+
 /** Loading gif **/
 function showLoadingMessage(option){
-
 
 	if (option){
 		$('#loader').css({"display":"block"});
 	}else{
 		$('#loader').css({"display":"none"});
 	}
-/*
 
-	showElement('loader',option);
-	document.getElementById('validation').innerHTML = "vea eso";
-	//alert('WTF!!!');
-	*/
 	return true;
 }
 
@@ -210,10 +234,11 @@ function activateSide(){
 	showElement("less",true);
 }
 
+/*
 function resizeNavBar(){
 	document.getElementById("side-bar").style.height = $("#section-ps").css("height");
 }
-
+*/
 
 /** Confirm before close window **/
 /*
@@ -225,10 +250,11 @@ window.onbeforeunload = function() {
 /** Handle Browser Fallbacks **/
 
 // Checks if attribute is supported by a browser
+/*
 function attributeSupported(attribute) {
 	return (attribute in document.createElement("input"));
 }
-
+*/
 
 /** Resize Detection **/
 
@@ -352,7 +378,118 @@ $(document).ready(function () {
 });	
 */
 
+/* Retrieve HETATM records from processed files*/
+function retrieveHETATM(file){
 
+	var lines = null;
+	var records = "";
+	var nlines;
+	//var regex = /^\s*HETATM\s*(.*)/g;
+
+	$.get(file, function(data) {
+      	lines = data.split("\n");
+    
+      	for (i=0; i<lines.length ;i++){
+			if (lines[i].indexOf("HETATM") > -1){
+				records = records + lines[i] + "\n";
+			}
+		}
+
+		document.getElementById('hetatm-values').value = records;
+
+    });
+	
+    return false;
+
+} 
+
+/* Read all output files and get only HETATM records */
+function joinAllHETATMs(path){
+
+		var i;
+		var name_file;
+		var file;
+
+		//clear textarea:
+		document.getElementById('hetatm-values').value = "";
+
+		var options = document.getElementById('glmol01_psresults').options;
+
+		for (i=0 ; i<options.length ; i++){
+
+			if (options[i].value !='All' && options[i].value != 'None'){
+
+				name_file = options[i].value.concat(".out");
+				file = path.concat(name_file);
+				
+
+				$.get(file, function(data) {
+					var records = "";
+				    var lines = null;
+			        lines = data.split("\n");
+			    	var j;
+			    	
+			      	for (j=0; j<lines.length ;j++){
+						if (lines[j].indexOf("HETATM") > -1){
+							records = records + lines[j] + "\n";
+						}
+					}
+
+					document.getElementById('hetatm-values').value = document.getElementById('hetatm-values').value + records;
+
+			    });
+			}
+		}
+
+}
+
+/* Reorder index of HETATMs records */
+function reorderHETATMs(){
+
+	var hetatmList = document.getElementById('hetatm-values').value;
+	var list = hetatmList.split("\n");
+	var records = "";
+	var temp = "";
+	var beg = 7;
+	var end = 11;
+
+	for (i=0; i<list.length ;i++){
+		temp ="";
+		if (list[i].indexOf("HETATM") > -1){
+			temp = removeAt(list[i],beg,end);
+
+			var count = i + 1;
+			var str = count.toString();
+			
+			if (i+1<10){
+				str = str + "    ";
+			}else if (i+1>=10 && i+1<100){
+				str = str + "   ";
+			}else if(i+1>=100 && i+1<1000){
+				str = str + "  ";
+			}else{
+				str = str + " ";
+			}
+
+			records = records + replaceAt(temp,beg,str) + "\n";
+		}
+	}
+
+	document.getElementById('hetatm-values').value = records;
+
+}
+
+function joinHETATMsToPDB(){
+
+}
+
+function replaceAt(s, n, t) {
+    return s.substring(0, n) + t + s.substring(n + 1);
+}
+
+function removeAt(str,beg,end){
+	return str.replace(str.substring(beg, end), "");
+}
            
 
 
