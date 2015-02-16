@@ -1,10 +1,33 @@
 /** 
 * Author:      Diego Montufar
 * Date:        22/01/2015
-* Description: JavaScript file containing all the basic page's elements behaviour.
-*              La Trobe Institute for Molecular Science 
+* Description: JavaScript file containing all the basic elements behaviour.
 **/
 
+/*
+setTimeout(function() {
+    $('#msgWarning').fadeOut('slow');
+}, 10000);
+*/
+setTimeout(function() {
+    $('#msgSuccess').fadeOut('slow');
+}, 10000);
+
+setTimeout(function() {
+    $('#msgError').fadeOut('slow');
+}, 10000);
+
+/*Escape button pressed */
+$(document).keyup(function(e) {
+
+  if (e.keyCode == 27) { 
+
+	THREEx.FullScreen.cancel();
+	document.getElementById('full-img').src = "images/fullscreen.png"
+	document.getElementById('full-img').title = "Go Fullscreen";
+
+   }   // esc
+});
 
 /** This is the first method called when loading the page **/
 $(window).load(function() {
@@ -23,13 +46,28 @@ $(window).load(function() {
 		addResizeListener(myElement, myResizeFn);
 		//removeResizeListener(myElement, myResizeFn);
 */
+	if (!webgl_detect(this)){
+		//document.getElementById('msgWarning').style.display = "block";
+	}else{
+		//document.getElementById('msgWarning').style.display = "none";
+	}	
+	document.getElementById('msgWarning').style.display = "none";
 	$(".loader").fadeOut("slow");
 	showElement('loader',false);
 	document.getElementById('file-img').style.visibility = "hidden";
-        showElement('chooseStructure',true);
-        showElement('downloadImage',false);
-        showElement('downloadAllImage',false);
+
+	if (document.getElementById("processedFlag").value == "true" && $('#field30 option').length >=3 ){
+		showElement('chooseStructure',true);
+		showElement('chooseStructureNone',false);
+	}else{
+		showElement('chooseStructure',false);
+		showElement('chooseStructureNone',true);
+	}
+	showElement('downloadImage',false);
+	showElement('downloadAllImage',false);
 })
+
+
 
 /** Enable/Disable Form fields **/
 function enable(setting){
@@ -114,30 +152,6 @@ function showElement(id,option){
   	}
 }
 
-/** Read output file contents **/
-function readFile(file) {
-
-	$.get(file, function(data) {
-		var lines = null;
-		var records = "";
-		var pre = '<pre style="font-size:11px;">';	
-		data = pre.concat(data);
-		data = data.concat("</pre>");	
- 		$('#fileDisplayArea').html(data);
-
- 		/* Take only HETATM records and store them in a textarea for visualization */
- 		lines = data.split("\n");
-    
-      	for (i=0; i<lines.length ;i++){
-			if (lines[i].indexOf("HETATM") > -1){
-				records = records + lines[i] + "\n";
-			}
-		}
-
-		document.getElementById('hetatm-values').value = records;
-
-	});
-}
 
 /** List Box Behaviour **/
 function getCombo(sel) {
@@ -153,18 +167,32 @@ function getCombo(sel) {
 	    document.getElementById('file-img').download = name_file;
 	    readFile(file);
 	    showElement('fileDisplayArea',true);
-            showElement('chooseStructure',false); 
+
+	if ($('#field30 option').length >= 3){
+		showElement('chooseStructure',false);
+		showElement('chooseStructureNone',false);
+	}else{
+		showElement('chooseStructure',false);
+		showElement('chooseStructureNone',true);
+	}
 	    showElement('downloadImage',true);
 	    if(document.getElementById('zipFlag').value != ''){	
 	    	showElement('downloadAllImage',true);
 	    }
 	    
     }else{
-	   document.getElementById('file-img').style.visibility = "hidden";
-	   showElement('fileDisplayArea',false);
-	   showElement('chooseStructure',true);	
-           showElement('downloadImage',false);
-           showElement('downloadAllImage',false);
+	    document.getElementById('file-img').style.visibility = "hidden";
+		showElement('fileDisplayArea',false);
+
+        if ($('#field30 option').length >= 3){
+			showElement('chooseStructure',true);
+			showElement('chooseStructureNone',false);
+		}else{
+			showElement('chooseStructure',false);
+			showElement('chooseStructureNone',true);
+		}
+		showElement('downloadImage',false);
+		showElement('downloadAllImage',false);
     }
 }
 
@@ -173,14 +201,64 @@ function getCombo(sel) {
 function getComboVis(sel) {
     var value = sel.value;
     var path = document.getElementById('filePath').value;
-    
+    var pdb_file = document.getElementById('pdbPath').value;
+
+    document.getElementById('hetatm-newpdb').value = "";
+    document.getElementById('hetatm-per').value = "";
+
     if (value != 'None' && value != 'All'){ 
 	    var name_file = value.concat(".out");
 		var file = path.concat(name_file);	
-	    readFile(file);
+	    readSingleOutputFile(file);
 	}else if (value == 'All'){
-		joinAllHETATMs(path);
+		readAllOutputFiles(path);
+	}else if (value == 'None'){
+		document.getElementById('hetatm-values').value = "";
 	}
+
+	$.when.apply(this, readSingleOutputFile)
+    .done(function(){
+        // when all the data calls are successful you can access the data via
+        var pdb_file = document.getElementById('pdbPath').value;
+	    getCurrentHETATMsFromPDB(pdb_file); //using $GET
+        console.log('Finished reading single files!!!!');
+    });
+
+}
+
+
+/** Read files to show in display area **/
+function readFile(file) {
+
+	$.get(file, function(data) {
+		var lines = null;
+		var records = "";
+		var pre = '<pre style="font-size:11px;">';	
+		data = pre.concat(data);
+		data = data.concat("</pre>");	
+ 		$('#fileDisplayArea').html(data);
+	});
+}
+
+/** Read single output file contents **/
+function readSingleOutputFile(file) {
+
+	$.get(file, function(data) {
+		var lines = null;
+		var records = "";
+
+ 		/* Take only HETATM records and store them in a textarea for visualization */
+ 		lines = data.split("\n");
+    
+      	for (i=0; i<lines.length ;i++){
+			if (lines[i].indexOf("HETATM") > -1){
+				records = records + lines[i] + "\n";
+			}
+		}
+
+		document.getElementById('hetatm-values').value = records;
+
+	});
 }
 
 
@@ -378,33 +456,9 @@ $(document).ready(function () {
 });	
 */
 
-/* Retrieve HETATM records from processed files*/
-function retrieveHETATM(file){
-
-	var lines = null;
-	var records = "";
-	var nlines;
-	//var regex = /^\s*HETATM\s*(.*)/g;
-
-	$.get(file, function(data) {
-      	lines = data.split("\n");
-    
-      	for (i=0; i<lines.length ;i++){
-			if (lines[i].indexOf("HETATM") > -1){
-				records = records + lines[i] + "\n";
-			}
-		}
-
-		document.getElementById('hetatm-values').value = records;
-
-    });
-	
-    return false;
-
-} 
 
 /* Read all output files and get only HETATM records */
-function joinAllHETATMs(path){
+function readAllOutputFiles(path){
 
 		var i;
 		var name_file;
@@ -421,26 +475,27 @@ function joinAllHETATMs(path){
 
 				name_file = options[i].value.concat(".out");
 				file = path.concat(name_file);
-				
 
 				$.get(file, function(data) {
 					var records = "";
 				    var lines = null;
 			        lines = data.split("\n");
-			    	var j;
 			    	
-			      	for (j=0; j<lines.length ;j++){
-						if (lines[j].indexOf("HETATM") > -1){
-							records = records + lines[j] + "\n";
+			      	for (i=0; i<lines.length ;i++){
+						if (lines[i].indexOf("HETATM") > -1){
+
+							if (i != lines.length -2){
+								records = records + lines[i] + "\n";
+							}else{
+								records = records + lines[i];
+							}
 						}
 					}
 
 					document.getElementById('hetatm-values').value = document.getElementById('hetatm-values').value + records;
-
 			    });
 			}
 		}
-
 }
 
 /* Reorder index of HETATMs records */
@@ -448,40 +503,134 @@ function reorderHETATMs(){
 
 	var hetatmList = document.getElementById('hetatm-values').value;
 	var list = hetatmList.split("\n");
+
 	var records = "";
 	var temp = "";
 	var beg = 7;
 	var end = 11;
+	var next_number = 0;
+	var finalList = "";
 
-	for (i=0; i<list.length ;i++){
+	var i;
+
+	for (i=0; i<list.length -1;i++){
+
 		temp ="";
-		if (list[i].indexOf("HETATM") > -1){
-			temp = removeAt(list[i],beg,end);
 
-			var count = i + 1;
-			var str = count.toString();
-			
-			if (i+1<10){
-				str = str + "    ";
-			}else if (i+1>=10 && i+1<100){
-				str = str + "   ";
-			}else if(i+1>=100 && i+1<1000){
-				str = str + "  ";
-			}else{
-				str = str + " ";
-			}
+		temp = removeAt(list[i],beg,end);
 
-			records = records + replaceAt(temp,beg,str) + "\n";
+		var count = i + 1;
+		var str = count.toString();
+		
+		if (i+1<10){
+			str = "   " + str;
+		}else if (i+1 >=10 && i+1 <100){
+			str = "  " + str;
+		}else if(i+1 >=100 && i+1 <1000){
+			str = " " + str;
+		}else{
+			str = "" + str;
 		}
+
+		if (i != list.length - 1){
+			records = records + replaceAt(temp,beg,str+ " ") + "\n";
+	 	}else{
+	 		records = records + replaceAt(temp,beg,str+ " ");
+	 	}
+
 	}
 
 	document.getElementById('hetatm-values').value = records;
 
 }
 
-function joinHETATMsToPDB(){
+
+function reinsertHETATMsToPDB(pdb_file){
+
+	console.log("I'm starting to reinsert HETATMs to PDB file");
+	var lines = null;
+	var records = "";
+	var i;
+	
+
+	$.get(pdb_file, function(data) {
+      	lines = data.split("\n");
+      	var placeFound = false;
+      	
+      	for (i=0; i<lines.length ;i++){
+
+      		if (placeFound){
+      			var hetatms = document.getElementById('hetatm-values').value;
+      			records = records + hetatms;
+      			placeFound = false;
+      		}
+
+      		if (lines[i].substring(0,3) == "TER"){
+      			placeFound = true;
+      		}
+
+      		if (lines[i].substring(0,6) != "HETATM" && lines[i].substring(0,6) != "      "){
+      			if (i != lines.length - 2){
+					records = records + lines[i] + "\n";
+				}else{
+					records = records + lines[i];
+				}
+
+			}
+		}
+
+		document.getElementById('hetatm-newpdb').value = records;
+		glmol01.loadMoleculeStr(null,document.getElementById('hetatm-newpdb').value);
+        glmol01.defineRepresentation = defineRepFromController;
+        glmol01.rebuildScene();
+        glmol01.show();
+
+    });
+	
+    return false;
+}
+
+function mixAllHETATMs(){
+	/* join with ps HETATMs */
+	if (document.getElementById('hetatm-current').value != ""){
+		document.getElementById('hetatm-values').value =  document.getElementById('hetatm-current').value + document.getElementById('hetatm-values').value;
+	}
 
 }
+
+
+function getCurrentHETATMsFromPDB(pdb_file){
+
+	var lines = null;
+	var records = "";
+	var i;
+
+	$.get(pdb_file, function(data) {
+      	lines = data.split("\n");
+      	
+      	for (i=0; i<lines.length ;i++){
+
+      		if (lines[i].substring(0,3) == "TER"){
+      			document.getElementById('hetatm-per').value = lines[i].substring(6,11);
+      		}
+
+			if (lines[i].substring(0,6) == "HETATM"){
+				if (i != lines.length - 2){
+					records = records + lines[i] + "\n";
+				}else{
+					records = records + lines[i];
+				}
+			}
+		}
+
+		document.getElementById('hetatm-current').value = records;
+
+    });
+	
+    return false;
+
+} 
+
 
 function replaceAt(s, n, t) {
     return s.substring(0, n) + t + s.substring(n + 1);
@@ -490,6 +639,8 @@ function replaceAt(s, n, t) {
 function removeAt(str,beg,end){
 	return str.replace(str.substring(beg, end), "");
 }
+
+
            
 
 

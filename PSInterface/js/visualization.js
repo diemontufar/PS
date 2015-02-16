@@ -1,18 +1,23 @@
 /** 
 * Author:      Diego Montufar
 * Date:        9/02/2015
-* Description: Visualization tools using Glmol and Three.js
-*              La Trobe Institute for Molecular Science 
+* Description: Visualization tools hepler for using Glmol and Three.js
 **/
 
-var glmol01 = new GLmol('glmol01', true);
-var glmol02 = new GLmol('glmol02', true);
-//renderPDBFile('files/input/2015-02-10/3I5F.pdb'); //TODO: This should be loaded only if WebGL enabled and after processing.
+var glmol01 = null;
+
+if (!webgl_detect(this)){
+	console.log('Disabling Visualization Tools...');
+}else{
+	glmol01 = new GLmol('glmol01', true);
+}
+ 
 
 /* Load PDB file inside canvas */
 function renderPDBFile(file) {
    $.get(file, function(data) {
       glmol01.loadMoleculeStr(null,data);
+      var color = document.getElementById('glmol01_bgcolor').value;
    });
 }
 
@@ -46,7 +51,7 @@ function saveImage() {
 function resetVis(){
 
     document.getElementById('glmol01_color').value = 'chainbow';
-    document.getElementById('glmol01_bgcolor').value = '#000000';
+    document.getElementById('glmol01_bgcolor').value = '0x000000';
     document.getElementById('glmol01_projection').value = 'perspective';
     document.getElementById('glmol01_mainchain').value = 'thickRibbon';
     document.getElementById('glmol01_nb').value = 'nb_cross';
@@ -63,14 +68,59 @@ function resetVis(){
 
 }
 
+/* Detect if web browser supports WebGL */
+function webgl_detect(return_context)
+{
+    if (!!window.WebGLRenderingContext) {
+        var canvas = document.createElement("canvas"),
+             names = ["webgl", "experimental-webgl", "moz-webgl", "webkit-3d"],
+           context = false;
+ 
+        for(var i=0;i<4;i++) {
+            try {
+                context = canvas.getContext(names[i]);
+                if (context && typeof context.getParameter == "function") {
+                    // WebGL is enabled
+                    if (return_context) {
+                        // return WebGL object if the function's argument is present
+                        return {name:names[i], gl:context};
+                    }
+                    // else, return just true
+                    return true;
+                }
+            } catch(e) {}
+        }
+ 
+        // WebGL is supported, but disabled
+        return false;
+    }
+ 
+    // WebGL not supported
+    return false;
+}
+
 /* Update changes to canvas */
 function reloadVis(){
-   /* Call the loading function for PS HETATMs */
-   reorderHETATMs();
-   loadPSHETATMs(document.getElementById('hetatm-values').value);
-   glmol01.defineRepresentation = defineRepFromController;
-   glmol01.rebuildScene();
-   glmol01.show();
+
+   $.when.apply(this, getCurrentHETATMsFromPDB)
+    .done(function(){
+        // when all the data calls are successful you can access the data via
+        console.log('Finished reading current HETATMs!!!!');
+        console.log('Starting mixing all');
+        mixAllHETATMs(); //not using $GET
+        reorderHETATMs(); //not using $GET
+
+        var pdb_file = document.getElementById('pdbPath').value;
+        reinsertHETATMsToPDB(pdb_file);
+        
+    });
+
+    if(document.getElementById('glmol01_projection').value == 'None'){
+        console.log('accessed as None');
+        glmol01.defineRepresentation = defineRepFromController;
+        glmol01.rebuildScene();
+        glmol01.show();
+    }
 }
 
 /* Form Controller */
@@ -84,7 +134,6 @@ var time = new Date();
    var hetatm = this.removeSolvents(allHet);
    console.log('Abajo esta hetatm');
    console.log(hetatm);
-
 
 console.log("selection " + (+new Date() - time)); time = new Date();
 
@@ -161,43 +210,21 @@ console.log("mainchain " + (+new Date() - time)); time = new Date();
       }
    }
 
-   var allVis = glmol02.getAllAtoms();
-   var allHetVis = glmol02.getHetatms(allVis);
-   var hetatmVis = glmol02.removeSolvents(allHetVis);
-
    var hetatmMode = $(idHeader + 'hetatm').val();
-   var hetatmModeVis = $(idHeader + 'psresults').val();
+   //var hetatmModeVis = $(idHeader + 'psresults').val();
    if (hetatmMode != 'none') {
       if (hetatmMode == 'stick') {
          this.drawBondsAsStick(target, hetatm, this.cylinderRadius, this.cylinderRadius, true);
-         if (hetatmModeVis != 'None'){
-            this.drawBondsAsStick(target, hetatmVis, this.cylinderRadius, this.cylinderRadius, true);
-         }
       } else if (hetatmMode == 'sphere') {
          this.drawAtomsAsSphere(target, hetatm, this.sphereRadius);
-         if (hetatmModeVis != 'None'){
-            this.drawAtomsAsSphere(target, hetatmVis, this.sphereRadius);
-         }
       } else if (hetatmMode == 'line') {
          this.drawBondsAsLine(target, hetatm, this.curveWidth);
-         if (hetatmModeVis != 'None'){
-            this.drawBondsAsLine(target, hetatmVis, this.curveWidth);
-         }
       } else if (hetatmMode == 'icosahedron') {
          this.drawAtomsAsIcosahedron(target, hetatm, this.sphereRadius);
-         if (hetatmModeVis != 'None'){
-            this.drawAtomsAsIcosahedron(target, hetatmVis, this.sphereRadius);
-         }
      } else if (hetatmMode == 'ballAndStick') {
          this.drawBondsAsStick(target, hetatm, this.cylinderRadius / 2.0, this.cylinderRadius, true, false, 0.3);
-         if (hetatmModeVis != 'None'){
-            this.drawBondsAsStick(target, hetatmVis, this.cylinderRadius / 2.0, this.cylinderRadius, true, false, 0.3);
-         }
      } else if (hetatmMode == 'ballAndStick2') {
          this.drawBondsAsStick(target, hetatm, this.cylinderRadius / 2.0, this.cylinderRadius, true, true, 0.3);
-         if (hetatmModeVis != 'None'){
-            this.drawBondsAsStick(target, hetatmVis, this.cylinderRadius / 2.0, this.cylinderRadius, true, true, 0.3);
-         }
      } 
 
    }
@@ -211,7 +238,6 @@ console.log("hetatms " + (+new Date() - time)); time = new Date();
    else if (projectionMode == 'orthoscopic') this.camera = this.orthoscopicCamera;
   
    var tempColor = $(idHeader + 'bgcolor').val();
-   tempColor = tempColor.replace("#","0x");
    this.setBackground(parseInt(tempColor));
 
    if ($(idHeader + 'cell').attr('checked')) {
@@ -228,4 +254,6 @@ console.log("hetatms " + (+new Date() - time)); time = new Date();
 };
 
 /* Assign controller to the Object for visualization*/
-glmol01.defineRepresentation = defineRepFromController;
+if (!webgl_detect(this) && glmol01 != null){
+	glmol01.defineRepresentation = defineRepFromController;
+}

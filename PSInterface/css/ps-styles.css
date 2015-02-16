@@ -64,6 +64,11 @@ and (max-width : 640px){
 		clear:none;
 		padding: 18px;
 	}
+
+  footer{
+    font-size: 8px;
+  }
+
 }
 
 @media (orientation: landscape) {
@@ -96,6 +101,9 @@ and (max-width : 640px){
 		padding:10px;
 		padding-bottom: 0px;
 	}
+
+
+
 }
 
 nav h1 {
@@ -138,7 +146,7 @@ article {
 .tabBox{
   font-size: 10px;
   left: 25%; 
-  height: 600px;
+  height: 635px;
   z-index:1; 
   display: inline-block; 
   vertical-align:top;
@@ -156,6 +164,7 @@ article {
   width: 38%;
   padding-left: 5px;
   padding-right: 5px;
+  border: solid 1px #808080;
 }
 
 
@@ -222,7 +231,7 @@ a:hover   { color: #468847; }
 .canvas-vis-wrapper{
   position: relative; 
   width: 60%; 
-  height: 600px; 
+  height: 635px; 
   background-color: black; 
   display: inline-block; 
   vertical-align:top;
@@ -252,6 +261,11 @@ select {
 select:hover {
   background: rgb(72, 159, 197);
   color: white;
+}
+
+.option {
+background: white;
+color: black;
 }
 
 
@@ -499,6 +513,11 @@ font-style: italic;
     width:60%;
 }
 
+.tableOption option {
+background: white;
+color: black;
+}
+
 .PSForm textarea {
     overflow: hidden;
 }
@@ -710,9 +729,6 @@ img {
 #table-results caption { font-size: larger; margin: 1em auto; }
 #table-results th, td { padding: 4px;}
 #table-results tr {border: 1px solid rgba(128, 128, 128, 0.33);}
-/*#table-results th, .thead { background: #000; color: #fff; border: 1px solid #000; }
-#table-results tr:nth-child(odd) { background: #ccc; }
-#table-results tr:hover { background: #aaa; } */
 #table-results td { width: 25%; border: 1px solid rgba(128, 128, 128, 0.33);}
 #table-results td+td { width: 75%; }
 
@@ -721,18 +737,14 @@ img {
 #insideTab table { border-collapse: collapse; font-family: Arial, sans-serif; width: 100%; font-size: 12px; table-layout:fixed;}
 #insideTab caption { font-size: larger; margin: 1em auto; }
 #insideTab th, td { padding: 3px; }
-/*#insideTab th, thead { background: #000; color: #fff; border: 1px solid #000; }*/
-/*#insideTab tr:nth-child(odd) { background: #ccc; }*/
-/*#insideTab tr:hover { background: #aaa; }*/
 #insideTab td { width: 50%; }
 #insideTab td+td { width: 50%; }
-#insideTab legend{ font-size: 15px; color: rgba(224, 128, 0, 1); font-style: italic; }
+#insideTab legend{ font-size: 15px; color: rgba(184, 6, 26, 1); }
 
 
 .loader {
     /* some styles to position the modal at the center of the page */
     
-    /*background: rgba(255, 255, 255, 0.39);*/
     position: fixed;
     width: 100%;
     height: 100%;
@@ -742,7 +754,6 @@ img {
    
     /* needed styles for the overlay */
     z-index: 10; /* keep on top of other elements on the page */
-    /*outline: 9999px solid rgba(232, 232, 232, 0.5);*/
 
 }
 

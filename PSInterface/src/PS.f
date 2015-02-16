@@ -707,20 +707,20 @@ c
 	  if (is_automatic.ne.1) then !automatic process
           write(out,'(A6,2X,I3,1X,A4,A1,A3,1X,A1,I4,A1,3X,3F8.3,1X,
      +                3F8.3)')
-     +     "HETATM",i,"X   ",conf(i),resname(i),chid(i),resnum(i),
+     +     "HETATM",i," X   ",conf(i),resname(i),chid(i),resnum(i),
      +      seqins(i),u(i),v(i),w(i),dir(1),dir(2),dir(3)
 	   endif !automatic
          elseif(i.eq.natoms) then
 	   if (is_automatic.ne.1) then !automatic process
           write(out,'(A6,2X,I3,1X,A4,A1,A3,1X,A1,I4,A1,3X,3F8.3,1X,
      +                3F8.3)')
-     +     "HETATM",i,"X   ",conf(i),resname(i),chid(i),resnum(i),
+     +     "HETATM",i," X   ",conf(i),resname(i),chid(i),resnum(i),
      +      seqins(i),u(i),v(i),w(i),dir(4),dir(5),dir(6)
 	   endif !automatic
          else
 	  if (is_automatic.ne.1) then !automatic process
           write(out,'(A6,2X,I3,1X,A4,A1,A3,1X,A1,I4,A1,3X,3F8.3)')
-     +     "HETATM",i,"X   ",conf(i),resname(i),chid(i),resnum(i),
+     +     "HETATM",i," X   ",conf(i),resname(i),chid(i),resnum(i),
      +      seqins(i),u(i),v(i),w(i)
 	  endif !automatic
          endif

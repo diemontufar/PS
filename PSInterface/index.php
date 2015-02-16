@@ -5,15 +5,6 @@ session_start();
 <html>
 
 <head>
-    <!--<link href="http://www.latrobe.edu.au/_media/la-trobe-api/v5/v5/default/core.css" rel="stylesheet" media="screen" />-->
-    <!--<link href="http://www.latrobe.edu.au/_media/la-trobe-api/v5/v5/default/styles.css" rel="stylesheet" media="screen" />
-    <link href="http://www.latrobe.edu.au/_media/la-trobe-api/v5/v5/default/print.css" rel="stylesheet" media="print" />
-    <link href="http://www.latrobe.edu.au/__data/assets/css_file/0006/564144/jquery-ui-1.10.3.css" rel="stylesheet" media="all" />  -->
-
-    <!-- CSS Styles: 
-    <link rel="stylesheet" href="css/styles.css" media="screen" />
-    <link rel="stylesheet" href="css/print.css" media="print" />-->
-        <!-- LTU //-->
     <meta name="description" content="PS (Pandus Semita), is a program for the analysis of helix geometry" />
     <meta name="keywords" content="Alpha helix, 310 helix, Pi helix, Radius of curvature, Phase yield, Pitch, Helix analysis, PS" />
     <meta name="audience" content="students, staff members, researchers" />
@@ -27,7 +18,7 @@ session_start();
     <link rel="stylesheet" href="css/ps-styles.css" media="screen" type="text/css"/> 
 
     <!-- Javascript -->
-    <script type="text/javascript" src="js/jquery-1.7.min.js"></script> <!-- Verison: 1.9.1 -->
+    <script type="text/javascript" src="js/jquery-1.7.min.js"></script> 
     <script type="text/javascript" src="js/ps.js"></script>
 
 
@@ -117,7 +108,14 @@ session_start();
 	}
 	unset($_SESSION["response"]); 
 	unset($_SESSION["image"]);
-?>      
+?>    
+
+<div class="alert alert-warning" id="msgWarning" style="display:none;">
+	<a class="close" data-dismiss="alert" onclick="closeWarning();">x</a>
+	<img src="images/warning.png" />&nbsp;
+	<strong>Warning!&nbsp;</strong>
+	Your browser doesn't suppot WebGL, Visualization tools will be disabled. 
+</div>
 
 <ul class="tabs">
     <li class="active"><a href="#tab1">Process</a></li>
@@ -318,16 +316,21 @@ Please fill out all the required fields (*). Choose between "Manual Settings" wh
   <tr>
     <td><strong>All Results</strong></td>
     <td>
+
 	<div id="chooseStructure" >
 		Please select a HELIX structure number.
+	</div>
+	<div id="chooseStructureNone" >
+		-
 	</div>
 	
 	<div id="downloadAllImage" style="<?php if(!empty($_SESSION['isZip'])) {echo 'display:block;';}else if(empty($_SESSION['isZip'])){echo 'display:none;';}?>">
       	<span>
-	<a id="all-file-img" href="<?php if(!empty($_SESSION['output-zip-name'])) {echo $_SESSION['output-zip-name'];}?>" download="<?php if(!empty($_SESSION['isZip'])) {echo $_SESSION['isZip'];}?>">
-	<img src="images/all-files-icon.png" />Download all files
-	</a>
+		<a id="all-file-img" href="<?php if(!empty($_SESSION['output-zip-name'])) {echo $_SESSION['output-zip-name'];}?>" download="<?php if(!empty($_SESSION['isZip'])) {echo $_SESSION['isZip'];}?>">
+			<img src="images/all-files-icon.png" />Download all files
+		</a>
 	</div>
+
     </td> 
   </tr>
   <tr>
@@ -404,16 +407,18 @@ Please fill out all the required fields (*). Choose between "Manual Settings" wh
 </table>
 <div class="instructions" >
 <br>
-(*)Some Helix records are ingored due to [...]
+(*)Some Helix records are ingored due to the need of more than 6 points (or 5 points with fixed Radius) in Conjugate Gradient minimization.
 </div>
 </div>
 
 <input type="hidden" name="filePath" id="filePath" value="<?php echo $_SESSION['path-to-output']?>" />
 <input type="hidden" name="pdbPath" id="pdbPath" value="<?php echo $_SESSION['path-to-input']?>" />
+<!--<input type="hidden" name="pdbPath" id="pdbPath" value="files/input/2015-02-03/3if5.pdb" />-->
 <input type="hidden" name="zipFlag" id="zipFlag" value="<?php echo $_SESSION['isZip']?>" />
+<input type="hidden" name="isWebGLenabled" id="isWebGLenabled" value="false" />
 <div id="fileDisplayArea">
 
-
+</div>
 <p></p>
 </article>
 
@@ -439,14 +444,18 @@ Please fill out all the required fields (*). Choose between "Manual Settings" wh
       <table>
          <tr>
             <td align="center" colspan=2 height="30px">
-               <legend>View</legend>
+               <legend>View Configuration</legend>
             </td>
          </tr>
          <tr>
-            <td><label for="glmol01_bgcolor">Background color:</label>	</td>
-            <td>
-            	<input type="color" value="#000000" id="glmol01_bgcolor">	
-            </td>
+         <td><label for="glmol01_bgcolor">Background color:</label>	</td>
+         <td>
+	         <select id="glmol01_bgcolor">
+				 <option value="0xffffff">White</option>
+				 <option selected="selected" value="0x000000">Black</option>
+				 <option value="0x888888">Grey</option>
+			</select>
+         </td>
          </tr>
          <tr>
             <td><label for="glmol01_color">Color By:</label></td>
@@ -488,7 +497,10 @@ Please fill out all the required fields (*). Choose between "Manual Settings" wh
 						  }
 					}
 					
-					$scanned_directory[0] = 'All';
+					if (count($scanned_directory) != 3){
+						$scanned_directory[0] = 'All';
+					}
+
 					$scanned_directory[1] = 'None';
 					sort($scanned_directory);
 
@@ -505,6 +517,20 @@ Please fill out all the required fields (*). Choose between "Manual Settings" wh
 								}
 							}
 						}
+
+						unset($_SESSION["output"]); 
+						unset($_SESSION["output-file-name"]);
+						unset($_SESSION["pdbId"]);
+						unset($_SESSION["description"]);
+						unset($_SESSION["processed"]);
+						unset($_SESSION["isZip"]);
+						unset($_SESSION["output-zip-name"]);
+						unset($_SESSION["error"]);
+						unset($_SESSION['path-to-input']);
+						unset($_SESSION['path-to-output']);
+
+
+
 					?>
                </select>
             </td>
@@ -602,10 +628,17 @@ Please fill out all the required fields (*). Choose between "Manual Settings" wh
    </div>
 </div>
 
+<div class="instructions" >
+<p>Visualization tools are based on the following components:</p>
+    3D molecular viewer <a href="https://github.com/biochem-fan/GLmol">GLmol</a> by biochem_fan 
+    | JavaScript 3D library <a href="http://threejs.org">three.js</a> by mrdoob
 </div>
-<?php unset($_SESSION["output"]); unset($_SESSION["output-file-name"]);unset($_SESSION["pdbId"]);unset($_SESSION["description"]);unset($_SESSION["processed"]);unset($_SESSION["isZip"]);unset($_SESSION["output-zip-name"]);unset($_SESSION["error"]);?>
-</div>
-<textarea id="hetatm-values" style="display: block; height: 500px; width: 500px;"></textarea>
+
+
+<textarea id="hetatm-values" style="display: none; height: 500px; width: 500px;"></textarea>
+<textarea id="hetatm-current" style="display: none; height: 500px; width: 500px;"></textarea>
+<textarea id="hetatm-newpdb" style="display: none; height: 500px; width: 500px;"></textarea>
+<input id="hetatm-per" style="display: none; "></input>
 
 <script src="js/Three49custom.js"></script>
 <script type="text/javascript" src="js/GLmol.js"></script>
@@ -620,7 +653,9 @@ Please fill out all the required fields (*). Choose between "Manual Settings" wh
 <footer>
 
 <div id="footer-wrapper">
-<div id="footer-left" class="footerdivs"></div>
+<div id="footer-left" class="footerdivs">
+  
+</div>
 <div id="footer-right" class="footerdivs">
 <strong>Prof Brian Smith</strong><br>
 Head, Department of Chemistry and Physics<br>
@@ -634,17 +669,27 @@ P +61 (0)3 9479 3245 | F +61 (0)3 9479 1266
 
 
 <script type="text/javascript">
-	    document.addEventListener('DOMContentLoaded', function() {
+	document.addEventListener('DOMContentLoaded', function() {
+
 		enable(false);
-	    document.getElementById("side-bar").style.display = "none";
+	        document.getElementById("side-bar").style.display = "none";
 		showElement("less",false);
 		showElement("more",true);
 
 		if (document.getElementById("processedFlag").value == "true"){
+			
 			document.getElementById("tab-showFileContent").style.display = "block";
-			document.getElementById("tab-showVisualization").style.display = "block";
-			document.getElementById('hetatm-values').value = "";
-			renderPDBFile(document.getElementById('pdbPath').value);
+
+			if (!webgl_detect(this)){
+				//document.getElementById('msgWarning').style.display = "block";
+				console.log('Disabling Visualization Tools...');
+				document.getElementById("tab-showVisualization").style.display = "none";
+			}else{
+				//document.getElementById('msgWarning').style.display = "none";
+				document.getElementById("tab-showVisualization").style.display = "block";
+				document.getElementById('hetatm-values').value = "";
+				renderPDBFile(document.getElementById('pdbPath').value);
+			}
 		}else {
 			document.getElementById("tab-showFileContent").style.display = "none";
 			document.getElementById("tab-showVisualization").style.display = "none";
@@ -653,8 +698,6 @@ P +61 (0)3 9479 3245 | F +61 (0)3 9479 1266
 
 	}, false);
 </script>
-
-
 
 </body>
 </html>

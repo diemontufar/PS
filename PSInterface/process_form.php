@@ -2,6 +2,8 @@
 /**
  * Author: Diego Montufar
  * Date: 05/12/2014
+ * Description: process_form is the core script which manages: connection to RCSB web services, directory creation, PS program
+ *              execution and results visualization.
  */
 
 session_start(); 
@@ -425,8 +427,6 @@ function create_zip($path='',$files = array(),$destination = '',$overwrite = fal
 			$new_filename = substr($file,strrpos($file,'/') + 1);
 			$zip->addFile($file,$new_filename);
 		}
-		//debug
-		//echo 'The zip archive contains ',$zip->numFiles,' files with a status of ',$zip->status;
 		
 		//close the zip -- done!
 		$zip->close();
