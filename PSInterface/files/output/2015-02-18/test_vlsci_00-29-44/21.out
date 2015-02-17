@@ -1,0 +1,70 @@
+PS (pandus semita) - a helix analysis program.  Vers 1.1
+ 
+ 
+ Minimized Objective : 0.696230E-01
+
+ Final parameters (residual gradients in parenthesis)
+                         R
+ Sphere radius:     1930.651 (-0.5E-06)
+                         a                    b                    c
+ Sphere centre:     1540.554 (-0.7E-06)  -438.774 ( 0.4E-06)  1084.795 ( 0.1E-06)  
+                         l                    m                    n
+ Plane orient:        -0.214 (-0.2E-06)    -0.965 ( 0.5E-07)    -0.150 (-0.3E-07)  
+ 
+                                  X       Y       Z      Dist
+          1 CA   CYS E 435      -2.681  67.279  40.521   2.224
+          2 CA   LEU E 436      -0.644  64.206  39.645   1.816
+          3 CA   SER E 437      -2.358  63.798  36.321   2.146
+          4 CA   GLU E 438      -0.849  67.142  35.240   2.296
+          5 CA   ILE E 439       2.633  65.832  35.966   2.333
+          6 CA   HIS E 440       2.119  62.713  33.865   2.480
+          7 CA   LYS E 441       1.016  65.036  31.041   1.898
+          8 CA   MET E 442       4.221  67.001  31.108   2.033
+          9 CA   GLU E 443       6.021  63.664  31.123   2.706
+         10 CA   GLU E 444       4.174  63.062  27.863   2.340
+         11 CA   VAL E 445       4.115  66.263  25.794   2.576
+         12 CA   SER E 446       7.701  67.161  26.785   2.352
+         13 CA   GLY E 447       8.740  63.738  25.651   1.986
+ 
+ Average distance =    2.245 +/- 0.264 Angstrom
+ Maximum distance =    2.706           Residue GLU 443
+ Minimum distance =    1.816           Residue LEU 436
+ 
+Axis perpendiculars:
+                                                                Direction
+                                  X       Y       Z       alpha   beta    gamma
+HETATM    1  X   CYS E 435      -2.999  65.090  40.295    0.567   0.030  -0.823
+HETATM    2  X   LEU E 436      -1.955  65.097  38.758
+HETATM    3  X   SER E 437      -0.952  65.103  37.284
+HETATM    4  X   GLU E 438       0.035  65.109  35.835
+HETATM    5  X   ILE E 439       0.802  65.113  34.712
+HETATM    6  X   HIS E 440       1.612  65.117  33.526
+HETATM    7  X   LYS E 441       2.580  65.121  32.113
+HETATM    8  X   MET E 442       3.577  65.126  30.660
+HETATM    9  X   GLU E 443       4.143  65.128  29.836
+HETATM   10  X   GLU E 444       5.072  65.131  28.486
+HETATM   11  X   VAL E 445       6.022  65.134  27.108
+HETATM   12  X   SER E 446       6.717  65.136  26.101
+HETATM   13  X   GLY E 447       7.581  65.139  24.852    0.575   0.028  -0.818
+ 
+                                Residue     Rise     Phase
+                               separation            yield
+                                         (Angstrom)(degrees)
+  1   CYS E  435  ->  LEU E  436   1       1.858    109.274
+  2   LEU E  436  ->  SER E  437   1       1.783    113.188
+  3   SER E  437  ->  GLU E  438   1       1.753     99.788
+  4   GLU E  438  ->  ILE E  439   1       1.360     99.703
+  5   ILE E  439  ->  HIS E  440   1       1.437     93.731
+  6   HIS E  440  ->  LYS E  441   1       1.713    101.643
+  7   LYS E  441  ->  MET E  442   1       1.762    115.277
+  8   MET E  442  ->  GLU E  443   1       1.000    100.050
+  9   GLU E  443  ->  GLU E  444   1       1.638     85.101
+ 10   GLU E  444  ->  VAL E  445   1       1.675     88.132
+ 11   VAL E  445  ->  SER E  446   1       1.223     94.634
+ 12   SER E  446  ->  GLY E  447   1       1.520    104.242
+ 
+ Rise/residue:    1.560 +/-  0.260 Angstrom
+ Phase:         100.397 +/-  9.260 degrees
+ Residue/turn:    3.586 +/-  0.331
+ Pitch:           5.594 +/-  0.516 Angstrom
+ Helix length:   18.720            Angstrom
