@@ -1,3 +1,4 @@
+#include "configuration.cpp"
 #include <stdio.h>
 #include <omp.h>			
 #include <cstdlib>
@@ -8,25 +9,31 @@
 #include <algorithm>
 #include <fstream>
 
+
 using namespace std;
 
-//Max number of allowed HELIX register lines
-const int MAX_LINES = 100;
-
-//files/output_auto4/
-//3I5F.pdb
 
 char * buffer;
 size_t size_buffer;
 
+int _NUM_THREADS;
+double _OBJ_MIN;
+string _STATS_FILE;
+string _PS_PROGRAM; 
+
+Configuration config;
+
+//Max number of allowed HELIX register lines
+int MAX_LINES;
+
 // Minimum number of residues in helix (-1)
-const int _MIN=9;
+int _MIN;
 // Maximum number of intervals - Seed maximum is 250.0
-const int STEPS=46;
+int STEPS;
 // Step-size
-const double STEP_SIZE=5.0;
+double STEP_SIZE;
 // Initial seed
-const double INITIAL_SEED=20.0;
+double INITIAL_SEED;
 /* Class: 
 # 1 = right-handed alpha
 # 2 = right-handed omega
@@ -38,7 +45,7 @@ const double INITIAL_SEED=20.0;
 # 8 = left-handed gamma
 # 9 = 2-7 ribbon helix
 # 10 = polyproline */
-const int _CLASS=1;
+int _CLASS;
 
 int n_lines = 0;
 int n_printed = 0;
@@ -56,7 +63,7 @@ double	wtime	= omp_get_wtime(); // Record the starting time
 void printStatistics(double time){
 	
 	n_errors = n_lines - n_printed;
-	string file = output_dir + "statistics.data";
+	string file = output_dir + _STATS_FILE;
 
 	  ofstream myfile (file.c_str());
 	  if (myfile.is_open())
@@ -177,14 +184,7 @@ void executeAutomaticProcess(){
 		exit(0);
 	}	
 
-	//cout << "\nSize: " << size_buffer << endl;
-	//cout << "Buffer en 0: " << buffer[0] << endl;
-	//cout << "Buffer en size: " << buffer[size_buffer - 2] << endl; 	
-
 	free(buffer);
-
-	//cout << "\nNumber of registers: " << n_lines << '\n';
-	//cout << "STARTED;" << endl;
 
 	int j;
 	
@@ -208,7 +208,7 @@ void executeAutomaticProcess(){
 		
 		if( atoi(lgth.c_str()) > _MIN && atoi(typ.c_str()) == _CLASS  ){
 			// Initial objective minimum
-			objmin = 99999.0;
+			objmin = _OBJ_MIN;
 
 				
 			for (int k = 1; k < STEPS; k++){
@@ -218,17 +218,11 @@ void executeAutomaticProcess(){
 			
 			//Construct automatic Command:
 			//ps_path =  IntToString (myID) + "/PS -i ";
-			ps_path = "./PS -i ";
+			ps_path = _PS_PROGRAM + " -i ";
 			command = ps_path + pdbin  + " -f " + trim(helices[j][2]) + " -l " 
 					+ trim(helices[j][3]) + " -c " + trim(helices[j][4]) 
 					+ " -a CA -s " + s_seed.str()+ ".0" + " -P auto";
-			/*
-			#pragma omp critical
-    			{
-				cout << "\n**************************************";	
-				cout << "\nBEGIN...";
-			}	
-			*/
+			
 			result_ps = GetStdoutFromCommand(command);
 
 			//Remove blank spaces:
@@ -251,11 +245,6 @@ void executeAutomaticProcess(){
 
 				if(minobj < objmin) {
 					objmin = minobj;
-					//radius =  result_values[2];   //Sphere radius
-					//distance = result_values[3];  //Average distance
-					//sddist =  result_values[4];   //Average sddistance
-					//arclength = result_values[5];  //Helix length
-					//cout << "\nGetting values...\n";
 			  	}
 				seed = seed + STEP_SIZE;
 			}else{
@@ -264,15 +253,8 @@ void executeAutomaticProcess(){
 				cout << "Error processing HELIX structure\n";
 				}
 			}
-/*
-			#pragma omp critical
-			{
-			cout << "Command: " << command << endl;
-			cout << "Minimized Objective: " << result_values[1].c_str() << endl;
-			cout << "Result: " << result_ps << "; Inner for: " << k << "; Outer for: " << j << ";Thread No: " << myID << "; N_threads: " << N_Threads << endl;
-			}
-*/
-			if(objmin == 99999.0) {
+
+			if(objmin == _OBJ_MIN) {
 			  cout << "Unable to determine helix parameters\n";
 			}
 			else {
@@ -287,7 +269,7 @@ void executeAutomaticProcess(){
 				s_seed << seed; 
 				
 				//ps_path =  IntToString (myID) + "/PS -i ";
-				ps_path = "./PS -i ";
+				ps_path = _PS_PROGRAM + " -i ";
 
 				command = ps_path + pdbin  + " -f " + trim(helices[j][2]) + " -l " 
 					+ trim(helices[j][3]) + " -c " + trim(helices[j][4]) 
@@ -333,7 +315,20 @@ int main (int argc, char *argv[]) {
 FILE * pFile;
 long lSize;
 
-omp_set_num_threads(32);
+config.Load("config/config.cfg");
+
+config.Get("threads",_NUM_THREADS);
+config.Get("min",_MIN);
+config.Get("max_lines",MAX_LINES);
+config.Get("steps",STEPS);
+config.Get("step_size",STEP_SIZE);
+config.Get("initial_seed",INITIAL_SEED);
+config.Get("class",_CLASS);
+config.Get("obj_min",_OBJ_MIN);
+config.Get("stats_file",_STATS_FILE);
+config.Get("ps_program",_PS_PROGRAM);
+
+omp_set_num_threads(_NUM_THREADS);
 
   if ( argc != 3 ){ // argc should be 2 for correct execution
     cout << "Program needs 2 parameters: [1]: Input pdb file, [2]: Output directory" << endl;
@@ -363,7 +358,7 @@ omp_set_num_threads(32);
 
   //Start automatic Process
   executeAutomaticProcess();
-  
+
   return 0;
 }
 

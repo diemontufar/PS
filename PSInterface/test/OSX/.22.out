@@ -1,0 +1,82 @@
+PS (pandus semita) - a helix analysis program.  Vers 1.1
+ 
+ 
+ Minimized Objective : 0.374705E-01
+
+ Final parameters (residual gradients in parenthesis)
+                         R
+ Sphere radius:       50.942 (-0.3E-06)
+                         a                    b                    c
+ Sphere centre:        6.011 (-0.1E-07)    71.740 (-0.7E-06)    38.229 ( 0.7E-06)  
+                         l                    m                    n
+ Plane orient:        -0.070 (-0.3E-07)    -0.476 ( 0.5E-07)     0.876 ( 0.3E-07)  
+ 
+                                  X       Y       Z      Dist
+          1 CA   LEU E 693     -12.577 113.032  61.523   2.048
+          2 CA   LYS E 694     -15.424 115.313  60.526   2.508
+          3 CA   GLU E 695     -15.619 114.036  56.926   2.247
+          4 CA   LEU E 696     -15.638 110.379  58.026   2.474
+          5 CA   GLU E 697     -18.448 111.041  60.495   2.533
+          6 CA   GLU E 698     -20.608 112.966  58.028   2.017
+          7 CA   SER E 699     -19.596 110.460  55.391   2.184
+          8 CA   SER E 700     -21.344 107.754  57.384   2.415
+          9 CA   PHE E 701     -24.243 110.205  57.983   2.132
+         10 CA   ARG E 702     -24.964 110.525  54.287   2.524
+         11 CA   LYS E 703     -24.483 106.808  54.010   2.009
+         12 CA   THR E 704     -27.115 105.890  56.594   2.149
+         13 CA   PHE E 705     -29.830 107.611  54.531   2.339
+         14 CA   GLU E 706     -28.429 106.004  51.381   2.474
+         15 CA   ASP E 707     -28.858 102.661  53.121   2.163
+         16 CA   TYR E 708     -32.222 103.666  54.601   2.332
+         17 CA   LEU E 709     -33.246 103.986  50.971   2.020
+ 
+ Average distance =    2.269 +/- 0.194 Angstrom
+ Maximum distance =    2.533           Residue GLU 697
+ Minimum distance =    2.009           Residue LYS 703
+ 
+Axis perpendiculars:
+                                                                Direction
+                                  X       Y       Z       alpha   beta    gamma
+HETATM    1  X   LEU E 693     -12.455 114.058  59.754   -0.931  -0.298  -0.213
+HETATM    2  X   LYS E 694     -14.405 113.412  59.247
+HETATM    3  X   GLU E 695     -15.750 112.916  58.870
+HETATM    4  X   LEU E 696     -16.689 112.546  58.594
+HETATM    5  X   GLU E 697     -18.100 111.948  58.156
+HETATM    6  X   GLU E 698     -19.644 111.236  57.645
+HETATM    7  X   SER E 699     -20.476 110.826  57.356
+HETATM    8  X   SER E 700     -22.263 109.879  56.698
+HETATM    9  X   PHE E 701     -23.124 109.389  56.363
+HETATM   10  X   ARG E 702     -24.416 108.609  55.835
+HETATM   11  X   LYS E 703     -25.698 107.779  55.282
+HETATM   12  X   THR E 704     -26.957 106.907  54.707
+HETATM   13  X   PHE E 705     -28.287 105.917  54.062
+HETATM   14  X   GLU E 706     -29.056 105.310  53.671
+HETATM   15  X   ASP E 707     -30.244 104.319  53.037
+HETATM   16  X   TYR E 708     -31.034 103.621  52.594
+HETATM   17  X   LEU E 709     -32.284 102.447  51.856   -0.657  -0.650  -0.382
+ 
+                                Residue     Rise     Phase
+                               separation            yield
+                                         (Angstrom)(degrees)
+  1   LEU E  693  ->  LYS E  694   1       2.116     85.128
+  2   LYS E  694  ->  GLU E  695   1       1.482     95.006
+  3   GLU E  695  ->  LEU E  696   1       1.046    102.297
+  4   LEU E  696  ->  GLU E  697   1       1.594     87.512
+  5   GLU E  697  ->  GLU E  698   1       1.775     93.799
+  6   GLU E  698  ->  SER E  699   1       0.972    120.469
+  7   SER E  699  ->  SER E  700   1       2.127     87.405
+  8   SER E  700  ->  PHE E  701   1       1.046    108.713
+  9   PHE E  701  ->  ARG E  702   1       1.599     93.537
+ 10   ARG E  702  ->  LYS E  703   1       1.624     96.314
+ 11   LYS E  703  ->  THR E  704   1       1.636    111.808
+ 12   THR E  704  ->  PHE E  705   1       1.779     96.788
+ 13   PHE E  705  ->  GLU E  706   1       1.055     98.602
+ 14   GLU E  706  ->  ASP E  707   1       1.671     95.076
+ 15   ASP E  707  ->  TYR E  708   1       1.144    107.931
+ 16   TYR E  708  ->  LEU E  709   1       1.867     96.877
+ 
+ Rise/residue:    1.533 +/-  0.378 Angstrom
+ Phase:          98.579 +/-  9.560 degrees
+ Residue/turn:    3.652 +/-  0.354
+ Pitch:           5.600 +/-  0.543 Angstrom
+ Helix length:   24.534            Angstrom
